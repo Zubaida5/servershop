@@ -1,0 +1,9 @@
+const Message = require('../models/messageModel');
+const AppError = require('../utils/appError');
+const handlerFactory = require('../utils/handlerFactory');
+const catchAsync = require('../utils/catchAsync');
+exports.getMessage = handlerFactory.getOne(Message);
+exports.createMessage = handlerFactory.createOne(Message);
+exports.updateMessage = handlerFactory.updateOne(Message);
+exports.deleteMessage = handlerFactory.deleteOne(Message);
+exports.getAllMessage = handlerFactory.getAll(Message);

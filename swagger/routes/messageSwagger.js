@@ -1,17 +1,17 @@
 /**
  * @swagger
  * tags:
- *   name: Massages
- *   description: Massages management and retrieval
+ *   name: Messages
+ *   description: Message management and retrieval
  */
 
 /**
  * @swagger
- * /massages:
+ * /messages:
  *   post:
- *     summary: Create a massages
- *     description: ADMIN can create massages.
- *     tags: [Massages]
+ *     summary: Create a message
+ *     description:  can create message.
+ *     tags: [Messages]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -19,7 +19,7 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/createMassages'
+ *             $ref: '#/components/schemas/createMessage'
  *     responses:
  *       "201":
  *         description: Created
@@ -32,7 +32,7 @@
  *                   type: string
  *                   example: success
  *                 doc:
- *                     $ref: '#/components/schemas/Massages'
+ *                     $ref: '#/components/schemas/Message'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -41,9 +41,9 @@
  *         $ref: '#/components/responses/Forbidden'
  *
  *   get:
- *     summary: Get all massages
- *     description: USER,ADMIN can retrieve all massages.
- *     tags: [Massages]
+ *     summary: Get all messages
+ *     description:  can retrieve all messages.
+ *     tags: [Messages]
  *     security:
  *       - Bearer: []
  *     parameters:
@@ -65,7 +65,7 @@
  *           type: integer
  *           minimum: 1
  *         default: 10
- *         description: Maximum number of massages
+ *         description: Maximum number of messages
  *       - in: query
  *         name: search
  *         schema:
@@ -100,7 +100,7 @@
  *                 doc:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Massages'
+ *                     $ref: '#/components/schemas/Message'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -109,11 +109,11 @@
 
 /**
  * @swagger
- * /massages/{id}:
+ * /messages/{id}:
  *   get:
- *     summary: Get a massages
- *     description: USER,ADMIN can use this router.
- *     tags: [Massages]
+ *     summary: Get a message
+ *     description:  can use this router.
+ *     tags: [Messages]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -122,7 +122,7 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: Massages id
+ *         description: Message id
  *     responses:
  *       "200":
  *         description: OK
@@ -135,7 +135,7 @@
  *                   type: string
  *                   example: success
  *                 doc:
- *                     $ref: '#/components/schemas/Massages'
+ *                     $ref: '#/components/schemas/Message'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -144,9 +144,9 @@
  *         $ref: '#/components/responses/NotFound'
  *
  *   patch:
- *     summary: Update a massages
- *     description: ADMIN can use this router.
- *     tags: [Massages]
+ *     summary: Update a message
+ *     description: USER,ADMIN can use this router.
+ *     tags: [Messages]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -155,13 +155,13 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: Massages id
+ *         description: Message id
  *     requestBody:
  *         required: true
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/updateMassages'
+ *               $ref: '#/components/schemas/updateMessage'
  *     responses:
  *       "200":
  *         description: OK
@@ -174,7 +174,7 @@
  *                   type: string
  *                   example: success
  *                 doc:
- *                     $ref: '#/components/schemas/Massages'
+ *                     $ref: '#/components/schemas/Message'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -183,9 +183,9 @@
  *         $ref: '#/components/responses/NotFound'
  *
  *   delete:
- *     summary: Delete a  massages.
- *     description: ADMIN can use this router.
- *     tags: [Massages]
+ *     summary: Delete a  message.
+ *     description:  can use this router.
+ *     tags: [Messages]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -194,7 +194,7 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: Massages id
+ *         description: Message id
  *     responses:
  *       "200":
  *         description: OK
@@ -217,37 +217,96 @@
  *         $ref: '#/components/responses/NotFound'
  */
 
-exports.Massages = {
+exports.Message = {
   type: 'object',
   properties: {
     id: { type: 'string' },
     // property
+    body: {
+      type: 'object',
+      properties: {
+        //  properties body
+      },
+    },
+    title: { type: 'string' },
+    user: { type: 'string' },
+    isRead: { type: 'boolean' },
   },
   example: {
     _id: '5ebac534954b54139806c112',
     // property example
+    body: {
+      // property example body
+    },
+
+    title: 'hello',
+
+    userId: '673c40cd59e293827f79e398',
+
+    isRead: false,
+
     createdAt: '2024-11-24T16:35:04.438Z',
     updatedAt: '2024-11-24T16:35:04.438Z',
   },
 };
-exports.createMassages = {
+exports.createMessage = {
   type: 'object',
   properties: {
     // create property
+    body: {
+      type: 'object',
+      properties: {
+        //  create  properties body
+      },
+    },
+    title: { type: 'string' },
+    user: { type: 'string' },
+    isRead: { type: 'boolean' },
   },
   example: {
     // create property example
+    body: {
+      // create property example body
+    },
+
+    title: 'hello',
+
+    userId: '673c40cd59e293827f79e398',
+
+    isRead: false,
   },
   required: [
     // required property
+
+    'title',
+
+    'user',
   ],
 };
-exports.updateMassages = {
+exports.updateMessage = {
   type: 'object',
   properties: {
     // update property
+    body: {
+      type: 'object',
+      properties: {
+        //  update properties body
+      },
+    },
+    title: { type: 'string' },
+    user: { type: 'string' },
+    isRead: { type: 'boolean' },
   },
   example: {
     // update property example
+    body: {
+      // update property example body
+    },
+
+    title: 'hello',
+
+    userId: '673c40cd59e293827f79e398',
+
+    isRead: false,
   },
 };

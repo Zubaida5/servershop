@@ -1,9 +1,0 @@
-const Massages = require('../models/massagesModel');
-const AppError = require('../utils/appError');
-const handlerFactory = require('../utils/handlerFactory');
-const catchAsync = require('../utils/catchAsync');
-exports.getMassages = handlerFactory.getOne(Massages);
-exports.createMassages = handlerFactory.createOne(Massages);
-exports.updateMassages = handlerFactory.updateOne(Massages);
-exports.deleteMassages = handlerFactory.deleteOne(Massages);
-exports.getAllMassages = handlerFactory.getAll(Massages);

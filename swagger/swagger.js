@@ -1,10 +1,10 @@
 const swaggerJsDoc = require('swagger-jsdoc');
-const { Order, createOrder, updateOrder } = require('./routes/orderSwagger');
 const {
-  Massages,
-  createMassages,
-  updateMassages,
-} = require('./routes/massagesSwagger');
+  Message,
+  createMessage,
+  updateMessage,
+} = require('./routes/messageSwagger');
+const { Order, createOrder, updateOrder } = require('./routes/orderSwagger');
 const {
   Review,
   createReview,
@@ -44,12 +44,12 @@ const options = {
     ],
     components: {
       schemas: {
+        Message,
+        createMessage,
+        updateMessage,
         Order,
         createOrder,
         updateOrder,
-        Massages,
-        createMassages,
-        updateMassages,
         Review,
         createReview,
         updateReview,

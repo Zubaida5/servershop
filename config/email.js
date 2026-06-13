@@ -10,9 +10,7 @@ module.exports = class Email {
     this.from = `FirstName LastName <${process.env.EMAIL_FROM}>`;
   }
   newTransport() {
-    if (
-      process.env.SERVICE_EMIL === 'gmail'
-    ) {
+    if (process.env.SERVICE_EMIL === 'gmail') {
       // Gmail
       return nodemailer.createTransport({
         service: 'Gmail',
