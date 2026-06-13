@@ -74,11 +74,21 @@ app.use(
 //ضغط البيانات قبل ارسالها من اجل تسريع النقل
 app.use(compression());
 //R <dont remove this line>
+const orderRouter = require('./routes/orderRoutes');
+const massagesRouter = require('./routes/massagesRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
+const typeRouter = require('./routes/typeRoutes');
+const serverRouter = require('./routes/serverRoutes');
 const userRouter = require('./routes/userRoutes');
 const imageRouter = require('./routes/imageRoutes');
 
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 //ROUTES <dont remove this line>
+app.use('/api/v1.0.0/orders', orderRouter);
+app.use('/api/v1.0.0/massages', massagesRouter);
+app.use('/api/v1.0.0/reviews', reviewRouter);
+app.use('/api/v1.0.0/types', typeRouter);
+app.use('/api/v1.0.0/servers', serverRouter);
 app.use('/api/v1.0.0/users', userRouter);
 app.use('/api/v1.0.0/images', imageRouter);
 //في حال طلب مورد غير موجود

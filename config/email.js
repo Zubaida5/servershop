@@ -11,7 +11,6 @@ module.exports = class Email {
   }
   newTransport() {
     if (
-      process.env.NODE_ENV === 'production' &&
       process.env.SERVICE_EMIL === 'gmail'
     ) {
       // Gmail

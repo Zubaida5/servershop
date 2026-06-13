@@ -1,4 +1,21 @@
 const swaggerJsDoc = require('swagger-jsdoc');
+const { Order, createOrder, updateOrder } = require('./routes/orderSwagger');
+const {
+  Massages,
+  createMassages,
+  updateMassages,
+} = require('./routes/massagesSwagger');
+const {
+  Review,
+  createReview,
+  updateReview,
+} = require('./routes/reviewSwagger');
+const { Type, createType, updateType } = require('./routes/typeSwagger');
+const {
+  Server,
+  createServer,
+  updateServer,
+} = require('./routes/serverSwagger');
 const { signUp } = require('./routes/auth');
 const { User, updateMe, createUser } = require('./routes/users');
 const {
@@ -27,6 +44,21 @@ const options = {
     ],
     components: {
       schemas: {
+        Order,
+        createOrder,
+        updateOrder,
+        Massages,
+        createMassages,
+        updateMassages,
+        Review,
+        createReview,
+        updateReview,
+        Type,
+        createType,
+        updateType,
+        Server,
+        createServer,
+        updateServer,
         signUp,
         createUser,
         updateMe,

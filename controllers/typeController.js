@@ -1,0 +1,9 @@
+const Type = require('../models/typeModel');
+const AppError = require('../utils/appError');
+const handlerFactory = require('../utils/handlerFactory');
+const catchAsync = require('../utils/catchAsync');
+exports.getType = handlerFactory.getOne(Type);
+exports.createType = handlerFactory.createOne(Type);
+exports.updateType = handlerFactory.updateOne(Type);
+exports.deleteType = handlerFactory.deleteOne(Type);
+exports.getAllType = handlerFactory.getAll(Type);
