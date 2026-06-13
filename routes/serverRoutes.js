@@ -10,6 +10,9 @@ router
   .get(restrictTo(USER, ADMIN), serverController.getAllServer)
   .post(restrictTo(ADMIN), serverController.createServer);
 router
+  .route('/mine')
+  .get(restrictTo(USER, ADMIN), serverController.getAllServer);
+router
   .route('/:id')
   .get(restrictTo(USER, ADMIN), serverController.getServer)
   .patch(restrictTo(ADMIN), serverController.updateServer)
