@@ -5,7 +5,9 @@ const { RoleCode } = require('./../utils/enum');
 const { USER, ADMIN } = RoleCode;
 const express = require('express');
 const router = express.Router();
+
 router.use(protect);
+
 router
   .route('/')
   .get(restrictTo(USER, ADMIN), orderController.getAllOrder)
@@ -14,9 +16,15 @@ router
     addVarBody('userId', 'userId'),
     orderController.createOrder,
   );
+
+router
+  .route('/:id/status')
+  .patch(restrictTo(ADMIN), orderController.updateOrderStatus);
+
+  router.route('/mine').get(restrictTo(USER), orderController.getMyOrders);
 router
   .route('/:id')
   .get(restrictTo(USER, ADMIN), orderController.getOrder)
-  .patch(restrictTo(USER), orderController.updateOrder)
-  .delete(restrictTo(USER, ADMIN), orderController.deleteOrder);
+  .delete(restrictTo(ADMIN), orderController.deleteOrder);
+
 module.exports = router;

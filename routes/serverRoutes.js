@@ -12,6 +12,7 @@ router
 router
   .route('/mine')
   .get(restrictTo(USER, ADMIN), serverController.getAllServer);
+  router.route('/mine').get(restrictTo(USER), serverController.getMyServers);
 router
   .route('/:id')
   .get(restrictTo(USER, ADMIN), serverController.getServer)

@@ -5,7 +5,6 @@ const orderSchema = new mongoose.Schema(
     methodPayment: {
       type: String,
       required: [true, 'Please enter methodPayment'],
-      unique: true,
     },
     item: [
       {
@@ -33,6 +32,7 @@ const orderSchema = new mongoose.Schema(
     status: {
       type: String,
       required: [true, 'Please enter status'],
+      enum: ['pending', 'active', 'completed', 'cancelled', 'rejected'],
     },
   },
   { timestamps: true, versionKey: false },
