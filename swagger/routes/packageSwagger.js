@@ -72,16 +72,6 @@
  *           type: string
  *         description: key-words you want to search about it
  *       - in: query
- *         name: agg
- *         schema:
- *           type: string
- *         description: group data by any field  (ex. {group=[brand],max=price,min= price,sum=price,avg=price})
- *       - in: query
- *         name: aggDate
- *         schema:
- *           type: string
- *         description: group data by date fields   (ex. {group=[createdAt],date=month,max=price,min=price,avg=price,year=2022})
- *       - in: query
  *         name: sort
  *         schema:
  *           type: string
@@ -183,7 +173,7 @@
  *         $ref: '#/components/responses/NotFound'
  *
  *   delete:
- *     summary: Delete a  package.
+ *     summary: Delete a package.
  *     description: ADMIN can use this router.
  *     tags: [packages]
  *     security:
@@ -221,52 +211,79 @@ exports.package = {
   type: 'object',
   properties: {
     id: { type: 'string' },
-    // property
-    ram: { type: 'number' },
     name: { type: 'string' },
+    ram: { type: 'number' },
+    storage: { type: 'string' },
+    cpu: { type: 'string' },
+    price: { type: 'number' },
+    priceMonthly: { type: 'number' },
+    serverId: { type: 'string' },
+    isAvailable: { type: 'boolean' },
   },
   example: {
     _id: '5ebac534954b54139806c112',
-    // property example
-    ram: 8,
-
     name: 'VPS Starter',
-
+    ram: 8,
+    storage: '256 GB',
+    cpu: 'Intel Xeon E-2334',
+    price: 99,
+    priceMonthly: 9,
+    serverId: '6a2f01f71a762e06b098a7e6',
+    isAvailable: true,
     createdAt: '2024-11-24T16:35:04.438Z',
     updatedAt: '2024-11-24T16:35:04.438Z',
   },
 };
+
 exports.createpackage = {
   type: 'object',
   properties: {
-    // create property
-    ram: { type: 'number' },
     name: { type: 'string' },
+    ram: { type: 'number' },
+    storage: { type: 'string' },
+    cpu: { type: 'string' },
+    price: { type: 'number' },
+    priceMonthly: { type: 'number' },
+    serverId: { type: 'string' },
   },
   example: {
-    // create property example
-    ram: 8,
-
     name: 'VPS Starter',
+    ram: 8,
+    storage: '256 GB',
+    cpu: 'Intel Xeon E-2334',
+    price: 99,
+    priceMonthly: 9,
+    serverId: '6a2f01f71a762e06b098a7e6',
   },
   required: [
-    // required property
-    'ram',
-
     'name',
+    'ram',
+    'storage',
+    'cpu',
+    'price',
+    'priceMonthly',
+    'serverId',
   ],
 };
+
 exports.updatepackage = {
   type: 'object',
   properties: {
-    // update property
-    ram: { type: 'number' },
     name: { type: 'string' },
+    ram: { type: 'number' },
+    storage: { type: 'string' },
+    cpu: { type: 'string' },
+    price: { type: 'number' },
+    priceMonthly: { type: 'number' },
+    isAvailable: { type: 'boolean' },
   },
   example: {
-    // update property example
-    ram: 8,
-
     name: 'VPS Starter',
+    ram: 8,
+    storage: '256 GB',
+    cpu: 'Intel Xeon E-2334',
+    price: 99,
+    priceMonthly: 9,
+    isAvailable: true,
   },
 };

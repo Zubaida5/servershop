@@ -1,9 +1,10 @@
-const package = require('../models/packageModel');
+const Package = require('../models/packageModel');
 const AppError = require('../utils/appError');
 const handlerFactory = require('../utils/handlerFactory');
 const catchAsync = require('../utils/catchAsync');
-exports.getpackage = handlerFactory.getOne(package);
-exports.createpackage = handlerFactory.createOne(package);
-exports.updatepackage = handlerFactory.updateOne(package);
-exports.deletepackage = handlerFactory.deleteOne(package);
-exports.getAllpackage = handlerFactory.getAll(package);
+
+exports.getPackage = handlerFactory.getOne(Package);
+exports.createPackage = handlerFactory.createOne(Package);
+exports.updatePackage = handlerFactory.updateOne(Package);
+exports.deletePackage = handlerFactory.deleteOne(Package);
+exports.getAllPackage = handlerFactory.getAll(Package);
