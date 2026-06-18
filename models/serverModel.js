@@ -1,54 +1,60 @@
 const mongoose = require('mongoose');
 const serverSchema = new mongoose.Schema(
   {
-    // <creating-property-schema />
-    lastChecked: {
-      type: Date,
+    name: {
+      type: String,
+      required: [true, 'Please enter name'],
+      unique: true,
     },
     location: {
       type: String,
       required: [true, 'Please enter location'],
-    },
-    priceMonthly: {
-      type: Number,
-      required: [true, 'Please enter priceMonthly'],
-    },
-    price: {
-      type: Number,
-      required: [true, 'Please enter price'],
-    },
-    storage: {
-      type: String,
-      required: [true, 'Please enter storage'],
-      validate: {
-        validator: (el) => /(512 G|1 T|254 G|2 T)/.test(el),
-        message: 'storage is not validate! , it most be like 1 T',
-      },
+      enum: ['Aleppo', 'Damascus', 'Lattakia'],
     },
     cpu: {
       type: String,
       required: [true, 'Please enter cpu'],
+      enum: [
+        'Intel Xeon E-2334',
+        'Intel Xeon E-2388G',
+        'AMD EPYC 7302',
+        'AMD EPYC 7402',
+        'Intel Xeon Gold 6226R',
+      ],
     },
-    ram: {
+    totalRam: {
       type: Number,
-      required: [true, 'Please enter ram'],
-      min: 4,
-      max: 256,
+      required: [true, 'Please enter totalRam'],
+      enum: [4, 8, 16, 32, 64, 128, 256],
+    },
+    usedRam: {
+      type: Number,
+      default: 0,
+    },
+    totalStorage: {
+      type: String,
+      required: [true, 'Please enter totalStorage'],
+      enum: ['256 GB', '512 GB', '1 TB', '2 TB', '4 TB'],
+    },
+    usedStorage: {
+      type: Number,
+      default: 0,
     },
     typeId: {
       type: mongoose.Schema.ObjectId,
       ref: 'Type',
       required: [true, 'Please enter type'],
     },
-    name: {
-      type: String,
-      required: [true, 'Please enter name'],
-      unique: true,
+    isAvailable: {
+      type: Boolean,
+      default: true,
+    },
+    lastChecked: {
+      type: Date,
     },
   },
   { timestamps: true, versionKey: false },
 );
-// <creating-function-schema />
 
 serverSchema.pre(/^find/, function (next) {
   this.populate({

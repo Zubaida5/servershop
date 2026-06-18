@@ -1,0 +1,9 @@
+const package = require('../models/packageModel');
+const AppError = require('../utils/appError');
+const handlerFactory = require('../utils/handlerFactory');
+const catchAsync = require('../utils/catchAsync');
+exports.getpackage = handlerFactory.getOne(package);
+exports.createpackage = handlerFactory.createOne(package);
+exports.updatepackage = handlerFactory.updateOne(package);
+exports.deletepackage = handlerFactory.deleteOne(package);
+exports.getAllpackage = handlerFactory.getAll(package);

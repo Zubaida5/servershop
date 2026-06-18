@@ -17,11 +17,13 @@ router
     orderController.createOrder,
   );
 
+router.route('/mine').get(restrictTo(USER), orderController.getMyOrders);
+router.route('/my-stats').get(restrictTo(USER), orderController.getMyStats);
+
 router
   .route('/:id/status')
   .patch(restrictTo(ADMIN), orderController.updateOrderStatus);
 
-  router.route('/mine').get(restrictTo(USER), orderController.getMyOrders);
 router
   .route('/:id')
   .get(restrictTo(USER, ADMIN), orderController.getOrder)

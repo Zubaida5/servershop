@@ -1,26 +1,32 @@
 const mongoose = require('mongoose');
 const orderSchema = new mongoose.Schema(
   {
-    // <creating-property-schema />
     methodPayment: {
       type: String,
       required: [true, 'Please enter methodPayment'],
+      enum: ['credit_card', 'shamCash'],
     },
     item: [
       {
-        // <creating-property-object-item />
+        type: {
+          type: String,
+          enum: ['buy', 'rent'],
+          required: true,
+        },
         price: {
           type: Number,
           required: [true, 'Please enter price'],
         },
         duration: {
           type: Number,
-          required: [true, 'Please enter duration'],
+          required: function () {
+            return this.type === 'rent';
+          },
         },
-        serverId: {
+        packageId: {
           type: mongoose.Schema.ObjectId,
-          ref: 'Server',
-          required: [true, 'Please enter server'],
+          ref: 'Package',
+          required: [true, 'Please enter package'],
         },
       },
     ],
@@ -37,12 +43,11 @@ const orderSchema = new mongoose.Schema(
   },
   { timestamps: true, versionKey: false },
 );
-// <creating-function-schema />
 
 orderSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'item.serverId',
-    select: '-_id',
+    path: 'item.packageId',
+    select: '-__v',
   });
   next();
 });

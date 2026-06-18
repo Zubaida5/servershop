@@ -1,4 +1,5 @@
 const swaggerJsDoc = require('swagger-jsdoc');
+const { package, createpackage, updatepackage } = require('./routes/packageSwagger');
 const {
   Message,
   createMessage,
@@ -44,6 +45,9 @@ const options = {
     ],
     components: {
       schemas: {
+        package,
+        createpackage,
+        updatepackage,
         Message,
         createMessage,
         updateMessage,
