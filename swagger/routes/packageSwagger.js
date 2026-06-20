@@ -31,8 +31,11 @@
  *                 status:
  *                   type: string
  *                   example: success
- *                 doc:
- *                     $ref: '#/components/schemas/package'
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     doc:
+ *                       $ref: '#/components/schemas/package'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -42,7 +45,7 @@
  *
  *   get:
  *     summary: Get all packages
- *     description: USER,ADMIN can retrieve all packages.
+ *     description: USER,ADMIN can retrieve all packages. ADMIN sees full server details, USER sees server id only.
  *     tags: [packages]
  *     security:
  *       - Bearer: []
@@ -87,10 +90,16 @@
  *                 status:
  *                   type: string
  *                   example: success
- *                 doc:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/package'
+ *                 results:
+ *                   type: number
+ *                   example: 6
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     doc:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/package'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -102,7 +111,7 @@
  * /packages/{id}:
  *   get:
  *     summary: Get a package
- *     description: USER,ADMIN can use this router.
+ *     description: USER,ADMIN can use this router. ADMIN sees full server details, USER sees server id only.
  *     tags: [packages]
  *     security:
  *       - bearerAuth: []
@@ -124,8 +133,11 @@
  *                 status:
  *                   type: string
  *                   example: success
- *                 doc:
- *                     $ref: '#/components/schemas/package'
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     doc:
+ *                       $ref: '#/components/schemas/package'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -163,8 +175,11 @@
  *                 status:
  *                   type: string
  *                   example: success
- *                 doc:
- *                     $ref: '#/components/schemas/package'
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     doc:
+ *                       $ref: '#/components/schemas/package'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":

@@ -31,8 +31,11 @@
  *                 status:
  *                   type: string
  *                   example: success
- *                 doc:
- *                     $ref: '#/components/schemas/Server'
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     doc:
+ *                       $ref: '#/components/schemas/Server'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -42,7 +45,7 @@
  *
  *   get:
  *     summary: Get all servers
- *     description: USER,ADMIN can retrieve all servers.
+ *     description: USER,ADMIN can retrieve all servers. ADMIN sees full details (usedRam, usedStorage, isAvailable, lastChecked). USER sees general info only.
  *     tags: [Servers]
  *     security:
  *       - Bearer: []
@@ -72,16 +75,6 @@
  *           type: string
  *         description: key-words you want to search about it
  *       - in: query
- *         name: agg
- *         schema:
- *           type: string
- *         description: group data by any field  (ex. {group=[brand],max=price,min= price,sum=price,avg=price})
- *       - in: query
- *         name: aggDate
- *         schema:
- *           type: string
- *         description: group data by date fields   (ex. {group=[createdAt],date=month,max=price,min=price,avg=price,year=2022})
- *       - in: query
  *         name: sort
  *         schema:
  *           type: string
@@ -97,10 +90,16 @@
  *                 status:
  *                   type: string
  *                   example: success
- *                 doc:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Server'
+ *                 results:
+ *                   type: number
+ *                   example: 4
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     doc:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Server'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -112,7 +111,7 @@
  * /servers/{id}:
  *   get:
  *     summary: Get a server
- *     description: USER,ADMIN can use this router.
+ *     description: USER,ADMIN can use this router. ADMIN sees full details. USER sees general info only.
  *     tags: [Servers]
  *     security:
  *       - bearerAuth: []
@@ -134,8 +133,11 @@
  *                 status:
  *                   type: string
  *                   example: success
- *                 doc:
- *                     $ref: '#/components/schemas/Server'
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     doc:
+ *                       $ref: '#/components/schemas/Server'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -173,8 +175,11 @@
  *                 status:
  *                   type: string
  *                   example: success
- *                 doc:
- *                     $ref: '#/components/schemas/Server'
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     doc:
+ *                       $ref: '#/components/schemas/Server'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
