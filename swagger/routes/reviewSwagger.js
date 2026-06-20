@@ -221,57 +221,41 @@ exports.Review = {
   type: 'object',
   properties: {
     id: { type: 'string' },
-    // property
     comment: { type: 'string' },
     rate: { type: 'number' },
-    user: { type: 'string' },
+    userId: { type: 'string' }, // ← غيرنا user لـ userId
   },
   example: {
     _id: '5ebac534954b54139806c112',
-    // property example
-    comment: ' good job',
-
+    comment: 'good job',
     rate: 5,
-
-    userId: '673c40cd59e293827f79e398',
-
+    userId: '6a2f01f71a762e06b098a7e6',
     createdAt: '2024-11-24T16:35:04.438Z',
     updatedAt: '2024-11-24T16:35:04.438Z',
   },
 };
+
 exports.createReview = {
   type: 'object',
   properties: {
-    // create property
     comment: { type: 'string' },
     rate: { type: 'number' },
   },
   example: {
-    // create property example
-    comment: ' good job',
-
+    comment: 'good job',
     rate: 5,
   },
-  required: [
-    // required property
-    'comment',
-
-    'rate',
-
-    'user',
-  ],
+  required: ['comment', 'rate'],
 };
+
 exports.updateReview = {
   type: 'object',
   properties: {
-    // update property
     comment: { type: 'string' },
     rate: { type: 'number' },
   },
   example: {
-    // update property example
-    comment: ' good job',
-
+    comment: 'good job',
     rate: 5,
   },
 };

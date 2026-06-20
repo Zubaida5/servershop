@@ -221,128 +221,71 @@ exports.Server = {
   type: 'object',
   properties: {
     id: { type: 'string' },
-    // property
-    lastChecked: { type: 'boolean' },
-    location: { type: 'string' },
-    priceMonthly: { type: 'number' },
-    price: { type: 'number' },
-    storage: { type: 'string' },
-    cpu: { type: 'string' },
-    ram: { type: 'number' },
-    type: { type: 'string' },
     name: { type: 'string' },
+    location: { type: 'string' },
+    cpu: { type: 'string' },
+    totalRam: { type: 'number' },
+    usedRam: { type: 'number' },
+    totalStorage: { type: 'string' },
+    usedStorage: { type: 'number' },
+    isAvailable: { type: 'boolean' },
+    lastChecked: { type: 'string' },
+    typeId: { type: 'string' },
   },
   example: {
     _id: '5ebac534954b54139806c112',
-    // property example
-    lastChecked: 2026 - 4 - 4,
-
-    location: 'gujhik',
-
-    priceMonthly: 600,
-
-    price: 500,
-
-    storage: '1 T',
-
-    cpu: 'intel core i 7',
-
-    ram: 16,
-
-    typeId: '673c40cd59e293827f79e398',
-
-    name: 'AWS',
-
+    name: 'Alpha-VPS-01',
+    location: 'Damascus',
+    cpu: 'Intel Xeon E-2334',
+    totalRam: 256,
+    usedRam: 0,
+    totalStorage: '4 TB',
+    usedStorage: 0,
+    isAvailable: true,
+    lastChecked: '2026-06-18T20:27:33.708Z',
+    typeId: '6a2f01f71a762e06b098a7e6',
     createdAt: '2024-11-24T16:35:04.438Z',
     updatedAt: '2024-11-24T16:35:04.438Z',
   },
 };
+
 exports.createServer = {
   type: 'object',
   properties: {
-    // create property
-    lastChecked: { type: 'boolean' },
-    location: { type: 'string' },
-    priceMonthly: { type: 'number' },
-    price: { type: 'number' },
-    storage: { type: 'string' },
-    cpu: { type: 'string' },
-    ram: { type: 'number' },
-    type: { type: 'string' },
     name: { type: 'string' },
+    location: { type: 'string' },
+    cpu: { type: 'string' },
+    totalRam: { type: 'number' },
+    totalStorage: { type: 'string' },
+    typeId: { type: 'string' },
   },
   example: {
-    // create property example
-    lastChecked: 2026 - 4 - 4,
-
-    location: 'gujhik',
-
-    priceMonthly: 600,
-
-    price: 500,
-
-    storage: '1 T',
-
-    cpu: 'intel core i 7',
-
-    ram: 16,
-
-    typeId: '673c40cd59e293827f79e398',
-
-    name: 'AWS',
+    name: 'Alpha-VPS-01',
+    location: 'Damascus',
+    cpu: 'Intel Xeon E-2334',
+    totalRam: 256,
+    totalStorage: '4 TB',
+    typeId: '6a2f01f71a762e06b098a7e6',
   },
-  required: [
-    // required property
-
-    'location',
-
-    'priceMonthly',
-
-    'price',
-
-    'storage',
-
-    'cpu',
-
-    'ram',
-
-    'type',
-
-    'name',
-  ],
+  required: ['name', 'location', 'cpu', 'totalRam', 'totalStorage', 'typeId'],
 };
+
 exports.updateServer = {
   type: 'object',
   properties: {
-    // update property
-    lastChecked: { type: 'boolean' },
-    location: { type: 'string' },
-    priceMonthly: { type: 'number' },
-    price: { type: 'number' },
-    storage: { type: 'string' },
-    cpu: { type: 'string' },
-    ram: { type: 'number' },
-    type: { type: 'string' },
     name: { type: 'string' },
+    location: { type: 'string' },
+    cpu: { type: 'string' },
+    totalRam: { type: 'number' },
+    totalStorage: { type: 'string' },
+    isAvailable: { type: 'boolean' },
   },
   example: {
-    // update property example
-    lastChecked: 2026 - 4 - 4,
-
-    location: 'gujhik',
-
-    priceMonthly: 600,
-
-    price: 500,
-
-    storage: '1 T',
-
-    cpu: 'intel core i 7',
-
-    ram: 16,
-
-    typeId: '673c40cd59e293827f79e398',
-
-    name: 'AWS',
+    name: 'Alpha-VPS-01',
+    location: 'Damascus',
+    cpu: 'Intel Xeon E-2334',
+    totalRam: 256,
+    totalStorage: '4 TB',
+    isAvailable: true,
   },
 };

@@ -1,4 +1,6 @@
 const Order = require('../models/orderModel');
+const Package = require('../models/packageModel');
+const Server = require('../models/serverModel');
 const AppError = require('../utils/appError');
 const handlerFactory = require('../utils/handlerFactory');
 const catchAsync = require('../utils/catchAsync');
@@ -6,6 +8,53 @@ const catchAsync = require('../utils/catchAsync');
 exports.getOrder = handlerFactory.getOne(Order);
 
 exports.createOrder = catchAsync(async (req, res, next) => {
+  // 1) المرور على كل عنصر بالأوردر والتحقق من توفر الموارد
+  for (const orderItem of req.body.item) {
+    const pkg = await Package.findById(orderItem.packageId);
+
+    if (!pkg) {
+      return next(new AppError('Package not found', 404));
+    }
+
+    if (!pkg.isAvailable) {
+      return next(
+        new AppError(`Package "${pkg.name}" is no longer available`, 400),
+      );
+    }
+
+    const server = await Server.findById(pkg.serverId._id || pkg.serverId);
+
+    if (!server) {
+      return next(new AppError('Server not found', 404));
+    }
+
+    const remainingRam = server.totalRam - server.usedRam;
+
+    if (remainingRam < pkg.ram) {
+      return next(
+        new AppError(
+          `Not enough RAM available on the server for package "${pkg.name}"`,
+          400,
+        ),
+      );
+    }
+
+    // 2) خصم الـ RAM من السيرفر
+    server.usedRam += pkg.ram;
+
+    // 3) إذا خلص الـ RAM، نخلي السيرفر غير متاح ونعطل باقاته
+    if (server.usedRam >= server.totalRam) {
+      server.isAvailable = false;
+      await Package.updateMany(
+        { serverId: server._id },
+        { isAvailable: false },
+      );
+    }
+
+    await server.save();
+  }
+
+  // 4) إنشاء الأوردر
   const order = await Order.create({
     ...req.body,
     status: 'pending',

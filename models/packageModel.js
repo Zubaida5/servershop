@@ -45,7 +45,7 @@ const packageSchema = new mongoose.Schema(
 packageSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'serverId',
-    select: '-_id',
+    select: '-__v',
   });
   next();
 });

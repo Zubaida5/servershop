@@ -83,7 +83,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       // url: resetURL,
     });
   } catch (err) {
-    console.log('EMAIL ERROR:', err);
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });

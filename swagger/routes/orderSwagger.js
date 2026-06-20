@@ -221,132 +221,77 @@ exports.Order = {
   type: 'object',
   properties: {
     id: { type: 'string' },
-    // property
     methodPayment: { type: 'string' },
+    status: { type: 'string' },
+    userId: { type: 'string' },
     item: {
       type: 'array',
       items: {
         type: 'object',
         properties: {
-          //  properties item
+          type: { type: 'string' },
           price: { type: 'number' },
-
           duration: { type: 'number' },
-
-          server: { type: 'string' },
+          packageId: { type: 'string' },
         },
       },
     },
-    user: { type: 'string' },
-    status: { type: 'string' },
   },
   example: {
     _id: '5ebac534954b54139806c112',
-    // property example
-    methodPayment: 'credit card',
-
+    methodPayment: 'credit_card',
+    status: 'pending',
+    userId: '6a2f01f71a762e06b098a7e6',
     item: [
       {
-        // property example item
-        price: 500,
-
-        duration: 2,
-
-        serverId: '673c40cd59e293827f79e398',
+        type: 'rent',
+        price: 99,
+        duration: 30,
+        packageId: '6a3454b5ea3eff2046ce0c39',
       },
     ],
-
-    userId: '673c40cd59e293827f79e398',
-
-    status: 'sale',
-
     createdAt: '2024-11-24T16:35:04.438Z',
     updatedAt: '2024-11-24T16:35:04.438Z',
   },
 };
+
 exports.createOrder = {
   type: 'object',
   properties: {
-    // create property
     methodPayment: { type: 'string' },
     item: {
       type: 'array',
       items: {
         type: 'object',
         properties: {
-          //  create  properties item
+          type: { type: 'string' },
           price: { type: 'number' },
-
           duration: { type: 'number' },
+          packageId: { type: 'string' },
         },
       },
     },
-
-    status: { type: 'string' },
   },
   example: {
-    // create property example
-    methodPayment: 'credit card',
-
+    methodPayment: 'credit_card',
     item: [
       {
-        // create property example item
-        price: 500,
-
-        duration: 2,
+        type: 'rent',
+        price: 99,
+        duration: 30,
+        packageId: '6a3454b5ea3eff2046ce0c39',
       },
     ],
-
-    status: 'sale',
   },
-  required: [
-    // required property
-    'methodPayment',
-
-    'item.price',
-
-    'item.duration',
-
-    'item.server',
-
-    'user',
-
-    'status',
-  ],
+  required: ['methodPayment', 'item'],
 };
+
 exports.updateOrder = {
   type: 'object',
   properties: {
-    // update property
-    methodPayment: { type: 'string' },
-    item: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          //  update properties item
-          price: { type: 'number' },
-
-          duration: { type: 'number' },
-        },
-      },
-    },
-
     status: { type: 'string' },
   },
   example: {
-    // update property example
-    methodPayment: 'credit card',
-
-    item: [
-      {
-        // update property example item
-        price: 500,
-
-        duration: 2,
-      },
-    ],
-
-    status: 'sale',
+    status: 'active',
   },
 };
