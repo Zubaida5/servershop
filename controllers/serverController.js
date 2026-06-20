@@ -5,11 +5,46 @@ const AppError = require('../utils/appError');
 const handlerFactory = require('../utils/handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 
-exports.getServer = handlerFactory.getOne(Server);
+const hiddenFields = '-usedRam -usedStorage -isAvailable -lastChecked';
+
+exports.getServer = catchAsync(async (req, res, next) => {
+  let query = Server.findById(req.params.id);
+
+  if (req.user.role !== 'ADMIN') {
+    query = query.select(hiddenFields);
+  }
+
+  const server = await query;
+
+  if (!server) {
+    return next(new AppError('No server found with this ID', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: { doc: server },
+  });
+});
+
 exports.createServer = handlerFactory.createOne(Server);
 exports.updateServer = handlerFactory.updateOne(Server);
 exports.deleteServer = handlerFactory.deleteOne(Server);
-exports.getAllServer = handlerFactory.getAll(Server);
+
+exports.getAllServer = catchAsync(async (req, res, next) => {
+  let query = Server.find();
+
+  if (req.user.role !== 'ADMIN') {
+    query = query.select(hiddenFields);
+  }
+
+  const servers = await query;
+
+  res.status(200).json({
+    status: 'success',
+    results: servers.length,
+    data: { doc: servers },
+  });
+});
 
 exports.getMyPackages = catchAsync(async (req, res, next) => {
   const orders = await Order.find({

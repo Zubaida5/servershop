@@ -42,13 +42,7 @@ const packageSchema = new mongoose.Schema(
   { timestamps: true, versionKey: false },
 );
 
-packageSchema.pre(/^find/, function (next) {
-  this.populate({
-    path: 'serverId',
-    select: '-__v',
-  });
-  next();
-});
+
 
 const Package = mongoose.model('Package', packageSchema);
 module.exports = Package;
