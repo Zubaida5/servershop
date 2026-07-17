@@ -4,6 +4,7 @@ const authController = require('./../controllers/authController');
 const authMiddlewers = require('./../middlewares/authMiddlewers');
 const imguserMiddlewers = require('./../middlewares/imguserMiddlewers');
 const router = express.Router();
+
 router.post('/login', authController.login);
 router.get('/logout', authController.logout);
 router.post('/forgotPassword', authController.forgotPassword);
@@ -32,6 +33,7 @@ router.patch(
 );
 router.patch('/updateMe', authMiddlewers.protect, userController.updateMe);
 router.delete('/deleteMe', authMiddlewers.protect, userController.deleteMe);
+
 router
   .route('/')
   .get(
@@ -46,6 +48,23 @@ router
     authMiddlewers.restrictTo('ADMIN'),
     userController.createUser,
   );
+
+router.patch(
+  '/:id/ban',
+  authMiddlewers.protect,
+  authMiddlewers.isactive,
+  authMiddlewers.restrictTo('ADMIN'),
+  userController.banUser,
+);
+
+router.patch(
+  '/:id/unban',
+  authMiddlewers.protect,
+  authMiddlewers.isactive,
+  authMiddlewers.restrictTo('ADMIN'),
+  userController.unbanUser,
+);
+
 router
   .route('/:id')
   .get(
@@ -66,4 +85,5 @@ router
     authMiddlewers.restrictTo('ADMIN'),
     userController.deleteUser,
   );
+
 module.exports = router;

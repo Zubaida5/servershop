@@ -4,7 +4,14 @@ const orderSchema = new mongoose.Schema(
     methodPayment: {
       type: String,
       required: [true, 'Please enter methodPayment'],
-      enum: ['credit_card', 'shamCash'],
+      enum: ['shamCash', 'syriatelCash'],
+    },
+    paymentNumber: {
+      type: String,
+      required: [true, 'Please enter payment number'],
+    },
+    paymentImage: {
+      type: String,
     },
     item: [
       {

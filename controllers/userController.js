@@ -74,3 +74,32 @@ exports.getAllUsers = factory.getAll(User);
 // Do NOT update passwords with this!
 exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
+exports.banUser = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(
+    req.params.id,
+    { active: false },
+    { new: true },
+  );
+
+  if (!user) return next(new AppError('No user found with this ID', 404));
+
+  res.status(200).json({
+    status: 'success',
+    message: 'User banned successfully',
+  });
+});
+
+exports.unbanUser = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(
+    req.params.id,
+    { active: true },
+    { new: true },
+  );
+
+  if (!user) return next(new AppError('No user found with this ID', 404));
+
+  res.status(200).json({
+    status: 'success',
+    message: 'User unbanned successfully',
+  });
+});
