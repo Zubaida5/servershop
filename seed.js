@@ -101,9 +101,19 @@ async function seed() {
 
   // Types
   const types = await Type.insertMany([
-    { name: 'Shared', description: 'مشاركة موارد السيرفر مع مستخدمين آخرين، مناسب للمواقع الصغيرة' },
-    { name: 'VPS', description: 'سيرفر افتراضي خاص بموارد مضمونة ومرونة عالية' },
-    { name: 'Dedicated', description: 'سيرفر مخصص بالكامل لك بأعلى أداء وأمان' },
+    {
+      name: 'Shared',
+      description:
+        'مشاركة موارد السيرفر مع مستخدمين آخرين، مناسب للمواقع الصغيرة',
+    },
+    {
+      name: 'VPS',
+      description: 'سيرفر افتراضي خاص بموارد مضمونة ومرونة عالية',
+    },
+    {
+      name: 'Dedicated',
+      description: 'سيرفر مخصص بالكامل لك بأعلى أداء وأمان',
+    },
     { name: 'Cloud', description: 'بنية سحابية قابلة للتوسع حسب الحاجة' },
   ]);
   console.log('✅ Types inserted');
@@ -242,31 +252,41 @@ async function seed() {
       methodPayment: 'credit_card',
       status: 'completed',
       userId: ADMIN_ID,
-      item: [{ type: 'buy', price: 99, duration: 0, packageId: packages[0]._id }],
+      item: [
+        { type: 'buy', price: 99, duration: 0, packageId: packages[0]._id },
+      ],
     },
     {
       methodPayment: 'shamCash',
       status: 'pending',
       userId: ADMIN_ID,
-      item: [{ type: 'rent', price: 49, duration: 30, packageId: packages[1]._id }],
+      item: [
+        { type: 'rent', price: 49, duration: 30, packageId: packages[1]._id },
+      ],
     },
     {
       methodPayment: 'credit_card',
       status: 'active',
       userId: ADMIN_ID,
-      item: [{ type: 'rent', price: 79, duration: 30, packageId: packages[2]._id }],
+      item: [
+        { type: 'rent', price: 79, duration: 30, packageId: packages[2]._id },
+      ],
     },
     {
       methodPayment: 'shamCash',
       status: 'completed',
       userId: ADMIN_ID,
-      item: [{ type: 'buy', price: 499, duration: 0, packageId: packages[3]._id }],
+      item: [
+        { type: 'buy', price: 499, duration: 0, packageId: packages[3]._id },
+      ],
     },
     {
       methodPayment: 'credit_card',
       status: 'cancelled',
       userId: ADMIN_ID,
-      item: [{ type: 'rent', price: 29, duration: 30, packageId: packages[4]._id }],
+      item: [
+        { type: 'rent', price: 29, duration: 30, packageId: packages[4]._id },
+      ],
     },
     {
       methodPayment: 'shamCash',
@@ -282,11 +302,36 @@ async function seed() {
 
   // Messages
   await Message.insertMany([
-    { title: 'مرحباً بك في المنصة', body: 'شكراً لتسجيلك معنا، نتمنى لك تجربة رائعة', isRead: true, userId: ADMIN_ID },
-    { title: 'تم تأكيد طلبك', body: 'تم استلام طلبك وهو قيد المعالجة الآن', isRead: true, userId: ADMIN_ID },
-    { title: 'عرض خاص لك', body: 'احصل على خصم 20% على جميع باقات VPS هذا الشهر', isRead: false, userId: ADMIN_ID },
-    { title: 'تحديث النظام', body: 'سيتم إجراء صيانة مجدولة يوم الجمعة القادم', isRead: false, userId: ADMIN_ID },
-    { title: 'تجديد الاشتراك', body: 'اشتراكك سينتهي خلال 7 أيام، يرجى التجديد', isRead: false, userId: ADMIN_ID },
+    {
+      title: 'مرحباً بك في المنصة',
+      body: 'شكراً لتسجيلك معنا، نتمنى لك تجربة رائعة',
+      isRead: true,
+      userId: ADMIN_ID,
+    },
+    {
+      title: 'تم تأكيد طلبك',
+      body: 'تم استلام طلبك وهو قيد المعالجة الآن',
+      isRead: true,
+      userId: ADMIN_ID,
+    },
+    {
+      title: 'عرض خاص لك',
+      body: 'احصل على خصم 20% على جميع باقات VPS هذا الشهر',
+      isRead: false,
+      userId: ADMIN_ID,
+    },
+    {
+      title: 'تحديث النظام',
+      body: 'سيتم إجراء صيانة مجدولة يوم الجمعة القادم',
+      isRead: false,
+      userId: ADMIN_ID,
+    },
+    {
+      title: 'تجديد الاشتراك',
+      body: 'اشتراكك سينتهي خلال 7 أيام، يرجى التجديد',
+      isRead: false,
+      userId: ADMIN_ID,
+    },
   ]);
   console.log('✅ Messages inserted');
 

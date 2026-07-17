@@ -31,8 +31,11 @@
  *                 status:
  *                   type: string
  *                   example: success
- *                 doc:
- *                     $ref: '#/components/schemas/Order'
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     order:
+ *                       $ref: '#/components/schemas/Order'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -42,7 +45,7 @@
  *
  *   get:
  *     summary: Get all orders
- *     description: USER,ADMIN can retrieve all orders.
+ *     description: USER sees only their orders. ADMIN sees all orders.
  *     tags: [Orders]
  *     security:
  *       - Bearer: []
@@ -67,21 +70,6 @@
  *         default: 10
  *         description: Maximum number of orders
  *       - in: query
- *         name: search
- *         schema:
- *           type: string
- *         description: key-words you want to search about it
- *       - in: query
- *         name: agg
- *         schema:
- *           type: string
- *         description: group data by any field  (ex. {group=[brand],max=price,min= price,sum=price,avg=price})
- *       - in: query
- *         name: aggDate
- *         schema:
- *           type: string
- *         description: group data by date fields   (ex. {group=[createdAt],date=month,max=price,min=price,avg=price,year=2022})
- *       - in: query
  *         name: sort
  *         schema:
  *           type: string
@@ -97,14 +85,147 @@
  *                 status:
  *                   type: string
  *                   example: success
- *                 doc:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Order'
+ *                 results:
+ *                   type: number
+ *                   example: 3
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     orders:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Order'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
  *         $ref: '#/components/responses/Forbidden'
+ */
+
+/**
+ * @swagger
+ * /orders/mine:
+ *   get:
+ *     summary: Get my orders
+ *     description: USER can get their own orders.
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 results:
+ *                   type: number
+ *                   example: 3
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     orders:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Order'
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ */
+
+/**
+ * @swagger
+ * /orders/my-stats:
+ *   get:
+ *     summary: Get my stats
+ *     description: USER can get their bought and rented packages stats.
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     totalBought:
+ *                       type: number
+ *                       example: 2
+ *                     totalRented:
+ *                       type: number
+ *                       example: 1
+ *                     boughtPackages:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                     rentedPackages:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ */
+
+/**
+ * @swagger
+ * /orders/{id}/status:
+ *   patch:
+ *     summary: Update order status
+ *     description: ADMIN can update order status.
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Order id
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [pending, active, completed, cancelled, rejected]
+ *             example:
+ *               status: active
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     order:
+ *                       $ref: '#/components/schemas/Order'
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
  */
 
 /**
@@ -134,47 +255,11 @@
  *                 status:
  *                   type: string
  *                   example: success
- *                 doc:
- *                     $ref: '#/components/schemas/Order'
- *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "403":
- *         $ref: '#/components/responses/Forbidden'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
- *
- *   patch:
- *     summary: Update a order
- *     description: USER can use this router.
- *     tags: [Orders]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: Order id
- *     requestBody:
- *         required: true
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/updateOrder'
- *     responses:
- *       "200":
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: success
- *                 doc:
- *                     $ref: '#/components/schemas/Order'
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     order:
+ *                       $ref: '#/components/schemas/Order'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -183,8 +268,8 @@
  *         $ref: '#/components/responses/NotFound'
  *
  *   delete:
- *     summary: Delete a  order.
- *     description: USER,ADMIN can use this router.
+ *     summary: Delete a order.
+ *     description: ADMIN can use this router.
  *     tags: [Orders]
  *     security:
  *       - bearerAuth: []
@@ -221,15 +306,20 @@ exports.Order = {
   type: 'object',
   properties: {
     id: { type: 'string' },
-    methodPayment: { type: 'string' },
-    status: { type: 'string' },
+    methodPayment: { type: 'string', enum: ['shamCash', 'syriatelCash'] },
+    paymentNumber: { type: 'string' },
+    paymentImage: { type: 'string' },
+    status: {
+      type: 'string',
+      enum: ['pending', 'active', 'completed', 'cancelled', 'rejected'],
+    },
     userId: { type: 'string' },
     item: {
       type: 'array',
       items: {
         type: 'object',
         properties: {
-          type: { type: 'string' },
+          type: { type: 'string', enum: ['buy', 'rent'] },
           price: { type: 'number' },
           duration: { type: 'number' },
           packageId: { type: 'string' },
@@ -239,7 +329,9 @@ exports.Order = {
   },
   example: {
     _id: '5ebac534954b54139806c112',
-    methodPayment: 'credit_card',
+    methodPayment: 'shamCash',
+    paymentNumber: '123456789',
+    paymentImage: 'https://example.com/image.jpg',
     status: 'pending',
     userId: '6a2f01f71a762e06b098a7e6',
     item: [
@@ -258,13 +350,15 @@ exports.Order = {
 exports.createOrder = {
   type: 'object',
   properties: {
-    methodPayment: { type: 'string' },
+    methodPayment: { type: 'string', enum: ['shamCash', 'syriatelCash'] },
+    paymentNumber: { type: 'string' },
+    paymentImage: { type: 'string' },
     item: {
       type: 'array',
       items: {
         type: 'object',
         properties: {
-          type: { type: 'string' },
+          type: { type: 'string', enum: ['buy', 'rent'] },
           price: { type: 'number' },
           duration: { type: 'number' },
           packageId: { type: 'string' },
@@ -273,7 +367,8 @@ exports.createOrder = {
     },
   },
   example: {
-    methodPayment: 'credit_card',
+    methodPayment: 'shamCash',
+    paymentNumber: '123456789',
     item: [
       {
         type: 'rent',
@@ -283,13 +378,16 @@ exports.createOrder = {
       },
     ],
   },
-  required: ['methodPayment', 'item'],
+  required: ['methodPayment', 'paymentNumber', 'item'],
 };
 
 exports.updateOrder = {
   type: 'object',
   properties: {
-    status: { type: 'string' },
+    status: {
+      type: 'string',
+      enum: ['pending', 'active', 'completed', 'cancelled', 'rejected'],
+    },
   },
   example: {
     status: 'active',

@@ -214,6 +214,82 @@
 
 /**
  * @swagger
+ * /users/{id}/ban:
+ *   patch:
+ *     summary: Ban a user
+ *     description: ADMIN can ban a user.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User id
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: User banned successfully
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+/**
+ * @swagger
+ * /users/{id}/unban:
+ *   patch:
+ *     summary: Unban a user
+ *     description: ADMIN can unban a user.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User id
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: User unbanned successfully
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+/**
+ * @swagger
  * /users/me:
  *   get:
  *     summary: Get your account
@@ -363,34 +439,30 @@
  */
 
 const { RoleCode } = require('../../utils/enum');
+
 exports.User = {
   type: 'object',
   properties: {
     id: { type: 'string' },
-    // property
-
     email: { type: 'string', format: 'email' },
     name: { type: 'string' },
     role: { type: 'string', enum: Object.values(RoleCode) },
     photo: { type: 'string' },
-    active: { type: 'string' },
+    active: { type: 'boolean' },
   },
   example: {
     id: '5ebac534954b54139806c112',
-    // property example
-
     email: 'user@gmail.com',
     name: 'adel seirafi',
     role: 'USER',
     photo: './public/img/dafult.jpg',
-    active: 'true',
+    active: true,
   },
 };
+
 exports.createUser = {
   type: 'object',
   properties: {
-    // create property
-
     name: { type: 'string' },
     email: { type: 'string' },
     password: { type: 'string' },
@@ -398,8 +470,6 @@ exports.createUser = {
     role: { type: 'string', enum: Object.values(RoleCode) },
   },
   example: {
-    // create property example
-
     name: 'Mohammed Seirafi',
     email: 'adel@gmail.com',
     password: '123454321',
@@ -411,15 +481,11 @@ exports.createUser = {
 exports.updateMe = {
   type: 'object',
   properties: {
-    // update property
-
     name: { type: 'string' },
     email: { type: 'string' },
     photo: { type: 'string' },
   },
   example: {
-    // update property example
-
     name: 'Mohammed Seirafi',
     email: 'adel@gmail.com',
     photo: './public/img/users/dafult.jpg',
