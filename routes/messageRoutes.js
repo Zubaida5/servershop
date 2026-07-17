@@ -15,7 +15,6 @@ router
   );
 router
   .route('/:id')
-  .get(restrictTo(), messageController.getMessage)
+  .get(messageController.getMessage)
   .patch(restrictTo(USER, ADMIN), messageController.updateMessage)
-  .delete(restrictTo(), messageController.deleteMessage);
 module.exports = router;
