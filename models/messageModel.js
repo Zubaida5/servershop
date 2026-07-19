@@ -3,7 +3,7 @@ const messageSchema = new mongoose.Schema(
   {
     // <creating-property-schema />
     body: {
-      // <creating-property-object-body />
+      type: mongoose.Schema.Types.Mixed,
     },
     title: {
       type: String,

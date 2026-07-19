@@ -27,8 +27,47 @@ exports.getServer = catchAsync(async (req, res, next) => {
 });
 
 exports.createServer = handlerFactory.createOne(Server);
-exports.updateServer = handlerFactory.updateOne(Server);
-exports.deleteServer = handlerFactory.deleteOne(Server);
+
+exports.updateServer = catchAsync(async (req, res, next) => {
+  const server = await Server.findById(req.params.id);
+
+  if (!server) {
+    return next(new AppError('No server found with this ID', 404));
+  }
+
+  const newTotalRam = req.body.totalRam ?? server.totalRam;
+  const newTotalStorage = req.body.totalStorage ?? server.totalStorage;
+
+  if (newTotalRam < server.usedRam) {
+    return next(
+      new AppError(
+        `totalRam (${newTotalRam} GB) لا يمكن أن يكون أصغر من usedRam (${server.usedRam} GB)`,
+        400,
+      ),
+    );
+  }
+
+  if (newTotalStorage < server.usedStorage) {
+    return next(
+      new AppError(
+        `totalStorage (${newTotalStorage} GB) لا يمكن أن يكون أصغر من usedStorage (${server.usedStorage} GB)`,
+        400,
+      ),
+    );
+  }
+
+  const updatedServer = await Server.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true, runValidators: true },
+  );
+
+  res.status(200).json({
+    status: 'success',
+    data: { doc: updatedServer },
+  });
+});
+
 
 exports.getAllServer = catchAsync(async (req, res, next) => {
   let query = Server.find();

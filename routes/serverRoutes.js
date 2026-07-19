@@ -17,7 +17,6 @@ router.route('/mine').get(restrictTo(USER), serverController.getMyPackages);
 router
   .route('/:id')
   .get(restrictTo(USER, ADMIN), serverController.getServer)
-  .patch(restrictTo(ADMIN), serverController.updateServer)
-  .delete(restrictTo(ADMIN), serverController.deleteServer);
+  .patch(restrictTo(ADMIN), serverController.updateServer);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const Order = require('../models/orderModel');
 const Package = require('../models/packageModel');
 const Server = require('../models/serverModel');
+const Message = require('../models/messageModel');
 const AppError = require('../utils/appError');
 const handlerFactory = require('../utils/handlerFactory');
 const catchAsync = require('../utils/catchAsync');
@@ -8,7 +9,6 @@ const catchAsync = require('../utils/catchAsync');
 exports.getOrder = handlerFactory.getOne(Order);
 
 exports.createOrder = catchAsync(async (req, res, next) => {
-  // 1) المرور على كل عنصر بالأوردر والتحقق من توفر الموارد
   for (const orderItem of req.body.item) {
     const pkg = await Package.findById(orderItem.packageId);
 
@@ -29,7 +29,6 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     }
 
     const remainingRam = server.totalRam - server.usedRam;
-
     if (remainingRam < pkg.ram) {
       return next(
         new AppError(
@@ -39,10 +38,19 @@ exports.createOrder = catchAsync(async (req, res, next) => {
       );
     }
 
-    // 2) خصم الـ RAM من السيرفر
-    server.usedRam += pkg.ram;
+    const remainingStorage = server.totalStorage - server.usedStorage;
+    if (remainingStorage < pkg.storage) {
+      return next(
+        new AppError(
+          `Not enough storage available on the server for package "${pkg.name}"`,
+          400,
+        ),
+      );
+    }
 
-    // 3) إذا خلص الـ RAM، نخلي السيرفر غير متاح ونعطل باقاته
+    server.usedRam += pkg.ram;
+    server.usedStorage += pkg.storage;
+
     if (server.usedRam >= server.totalRam) {
       server.isAvailable = false;
       await Package.updateMany(
@@ -54,7 +62,6 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     await server.save();
   }
 
-  // 4) إنشاء الأوردر
   const order = await Order.create({
     ...req.body,
     status: 'pending',
@@ -138,6 +145,18 @@ exports.updateOrderStatus = catchAsync(async (req, res, next) => {
 
   if (!order) return next(new AppError('No order found with this ID', 404));
 
+  // إذا صار الأوردر active، بعت Message لليوزر
+  if (status === 'active') {
+    await Message.create({
+      title: 'تم تفعيل طلبك',
+      body: {
+        orderId: order._id,
+      },
+      userId: order.userId,
+      isRead: false,
+    });
+  }
+
   res.status(200).json({
     status: 'success',
     data: { order },
@@ -155,5 +174,29 @@ exports.getAllOrder = catchAsync(async (req, res, next) => {
     status: 'success',
     results: orders.length,
     data: { orders },
+  });
+});
+exports.cancelOrder = catchAsync(async (req, res, next) => {
+  const order = await Order.findOne({
+    _id: req.params.id,
+    userId: req.user.id,
+  });
+
+  if (!order) {
+    return next(new AppError('No order found with this ID', 404));
+  }
+
+  if (order.status !== 'pending') {
+    return next(
+      new AppError('You can only cancel orders that are still pending', 400),
+    );
+  }
+
+  order.status = 'cancelled';
+  await order.save();
+
+  res.status(200).json({
+    status: 'success',
+    data: { order },
   });
 });

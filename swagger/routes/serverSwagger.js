@@ -45,7 +45,7 @@
  *
  *   get:
  *     summary: Get all servers
- *     description: USER,ADMIN can retrieve all servers. ADMIN sees full details (usedRam, usedStorage, isAvailable, lastChecked). USER sees general info only.
+ *     description: USER,ADMIN can retrieve all servers. ADMIN sees full details. USER sees general info only.
  *     tags: [Servers]
  *     security:
  *       - Bearer: []
@@ -69,11 +69,6 @@
  *           minimum: 1
  *         default: 10
  *         description: Maximum number of servers
- *       - in: query
- *         name: search
- *         schema:
- *           type: string
- *         description: key-words you want to search about it
  *       - in: query
  *         name: sort
  *         schema:
@@ -186,40 +181,6 @@
  *         $ref: '#/components/responses/Forbidden'
  *       "404":
  *         $ref: '#/components/responses/NotFound'
- *
- *   delete:
- *     summary: Delete a  server.
- *     description: ADMIN can use this router.
- *     tags: [Servers]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: Server id
- *     responses:
- *       "200":
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: success
- *                 data:
- *                   type: string
- *                   example: null
- *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "403":
- *         $ref: '#/components/responses/Forbidden'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
  */
 
 exports.Server = {
@@ -231,7 +192,7 @@ exports.Server = {
     cpu: { type: 'string' },
     totalRam: { type: 'number' },
     usedRam: { type: 'number' },
-    totalStorage: { type: 'string' },
+    totalStorage: { type: 'number' },
     usedStorage: { type: 'number' },
     isAvailable: { type: 'boolean' },
     lastChecked: { type: 'string' },
@@ -239,12 +200,12 @@ exports.Server = {
   },
   example: {
     _id: '5ebac534954b54139806c112',
-    name: 'Alpha-VPS-01',
+    name: 'VPS-Server-01',
     location: 'Damascus',
-    cpu: 'Intel Xeon E-2334',
+    cpu: 'Intel Xeon E-2388G',
     totalRam: 256,
     usedRam: 0,
-    totalStorage: '4 TB',
+    totalStorage: 4096,
     usedStorage: 0,
     isAvailable: true,
     lastChecked: '2026-06-18T20:27:33.708Z',
@@ -261,15 +222,15 @@ exports.createServer = {
     location: { type: 'string' },
     cpu: { type: 'string' },
     totalRam: { type: 'number' },
-    totalStorage: { type: 'string' },
+    totalStorage: { type: 'number' },
     typeId: { type: 'string' },
   },
   example: {
-    name: 'Alpha-VPS-01',
+    name: 'VPS-Server-01',
     location: 'Damascus',
-    cpu: 'Intel Xeon E-2334',
+    cpu: 'Intel Xeon E-2388G',
     totalRam: 256,
-    totalStorage: '4 TB',
+    totalStorage: 4096,
     typeId: '6a2f01f71a762e06b098a7e6',
   },
   required: ['name', 'location', 'cpu', 'totalRam', 'totalStorage', 'typeId'],
@@ -282,15 +243,15 @@ exports.updateServer = {
     location: { type: 'string' },
     cpu: { type: 'string' },
     totalRam: { type: 'number' },
-    totalStorage: { type: 'string' },
+    totalStorage: { type: 'number' },
     isAvailable: { type: 'boolean' },
   },
   example: {
-    name: 'Alpha-VPS-01',
+    name: 'VPS-Server-01',
     location: 'Damascus',
-    cpu: 'Intel Xeon E-2334',
+    cpu: 'Intel Xeon E-2388G',
     totalRam: 256,
-    totalStorage: '4 TB',
+    totalStorage: 4096,
     isAvailable: true,
   },
 };

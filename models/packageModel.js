@@ -12,10 +12,10 @@ const packageSchema = new mongoose.Schema(
       required: [true, 'Please enter ram'],
       enum: [4, 8, 16, 32, 64, 128, 256],
     },
+   
     storage: {
-      type: String,
+      type: Number,
       required: [true, 'Please enter storage'],
-      enum: ['256 GB', '512 GB', '1 TB', '2 TB', '4 TB'],
     },
     cpu: {
       type: String,

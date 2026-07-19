@@ -31,10 +31,10 @@ const serverSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    
     totalStorage: {
-      type: String,
+      type: Number,
       required: [true, 'Please enter totalStorage'],
-      enum: ['256 GB', '512 GB', '1 TB', '2 TB', '4 TB'],
     },
     usedStorage: {
       type: Number,

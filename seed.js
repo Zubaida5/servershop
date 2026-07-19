@@ -18,7 +18,7 @@ const serverSchema = new mongoose.Schema(
     cpu: String,
     totalRam: Number,
     usedRam: { type: Number, default: 0 },
-    totalStorage: String,
+    totalStorage: Number,
     usedStorage: { type: Number, default: 0 },
     isAvailable: { type: Boolean, default: true },
     lastChecked: Date,
@@ -32,7 +32,7 @@ const packageSchema = new mongoose.Schema(
   {
     name: String,
     ram: Number,
-    storage: String,
+    storage: Number,
     cpu: String,
     price: Number,
     priceMonthly: Number,
@@ -56,6 +56,8 @@ const Review = mongoose.model('Review', reviewSchema);
 const orderSchema = new mongoose.Schema(
   {
     methodPayment: String,
+    paymentNumber: String,
+    paymentImage: String,
     status: String,
     userId: { type: mongoose.Schema.ObjectId, ref: 'User' },
     item: [
@@ -88,7 +90,6 @@ async function seed() {
   await mongoose.connect(DB);
   console.log('✅ Connected to MongoDB');
 
-  // Clear old data
   await Promise.all([
     Type.deleteMany({}),
     Server.deleteMany({}),
@@ -102,134 +103,247 @@ async function seed() {
   // Types
   const types = await Type.insertMany([
     {
-      name: 'Shared',
-      description:
-        'مشاركة موارد السيرفر مع مستخدمين آخرين، مناسب للمواقع الصغيرة',
-    },
-    {
       name: 'VPS',
-      description: 'سيرفر افتراضي خاص بموارد مضمونة ومرونة عالية',
+      description:
+        'سيرفر افتراضي خاص بموارد مضمونة ومرونة عالية، يعتمد على هاردات SSD عادية',
     },
     {
-      name: 'Dedicated',
-      description: 'سيرفر مخصص بالكامل لك بأعلى أداء وأمان',
+      name: 'VPS-NVMe',
+      description:
+        'سيرفر افتراضي بهاردات NVMe فائقة السرعة، أسعاره أعلى قليلاً',
     },
-    { name: 'Cloud', description: 'بنية سحابية قابلة للتوسع حسب الحاجة' },
+    {
+      name: 'Cloud',
+      description:
+        'بيئة سحابية مرنة تعتمد على توزيع البيانات على أكثر من سيرفر لضمان عدم توقف الموقع',
+    },
+    {
+      name: 'Windows',
+      description:
+        'سيرفرات تعمل بنظام Windows Server، مخصصة للمطورين الذين يحتاجون بيئة عمل ميكروسوفت',
+    },
   ]);
   console.log('✅ Types inserted');
 
-  // Servers
+  // Servers (totalStorage بالغيغا)
   const servers = await Server.insertMany([
     {
-      name: 'Alpha-VPS-01',
+      name: 'VPS-Server-01',
       location: 'Damascus',
-      cpu: 'Intel Xeon E-2334',
+      cpu: 'Intel Xeon E-2388G',
       totalRam: 256,
       usedRam: 0,
-      totalStorage: '4 TB',
+      totalStorage: 4096, // 4 TB
+      usedStorage: 0,
+      isAvailable: true,
+      lastChecked: new Date(),
+      typeId: types[0]._id,
+    },
+    {
+      name: 'NVMe-Server-01',
+      location: 'Aleppo',
+      cpu: 'AMD EPYC 7402',
+      totalRam: 256,
+      usedRam: 0,
+      totalStorage: 4096, // 4 TB
       usedStorage: 0,
       isAvailable: true,
       lastChecked: new Date(),
       typeId: types[1]._id,
     },
     {
-      name: 'Beta-Dedicated-01',
-      location: 'Aleppo',
-      cpu: 'AMD EPYC 7302',
-      totalRam: 256,
+      name: 'Cloud-Server-01',
+      location: 'Lattakia',
+      cpu: 'Intel Xeon Gold 6226R',
+      totalRam: 512,
       usedRam: 0,
-      totalStorage: '4 TB',
+      totalStorage: 4096, // 4 TB
       usedStorage: 0,
       isAvailable: true,
       lastChecked: new Date(),
       typeId: types[2]._id,
     },
     {
-      name: 'Gamma-Cloud-01',
-      location: 'Lattakia',
-      cpu: 'Intel Xeon Gold 6226R',
+      name: 'Windows-Server-01',
+      location: 'Damascus',
+      cpu: 'Intel Xeon E-2334',
       totalRam: 256,
       usedRam: 0,
-      totalStorage: '4 TB',
+      totalStorage: 2048, // 2 TB
       usedStorage: 0,
       isAvailable: true,
       lastChecked: new Date(),
       typeId: types[3]._id,
     },
-    {
-      name: 'Delta-Shared-01',
-      location: 'Damascus',
-      cpu: 'Intel Xeon E-2334',
-      totalRam: 128,
-      usedRam: 0,
-      totalStorage: '2 TB',
-      usedStorage: 0,
-      isAvailable: true,
-      lastChecked: new Date(),
-      typeId: types[0]._id,
-    },
   ]);
   console.log('✅ Servers inserted');
 
-  // Packages
+  // Packages (storage بالغيغا)
   const packages = await Package.insertMany([
+    // VPS Packages
     {
-      name: 'VPS Starter',
+      name: 'VPS اقتصادية',
+      ram: 2,
+      storage: 256,
+      cpu: 'Intel Xeon E-2388G',
+      price: 15,
+      priceMonthly: 8,
+      serverId: servers[0]._id,
+      isAvailable: true,
+    },
+    {
+      name: 'VPS متوسطة',
       ram: 4,
-      storage: '256 GB',
-      cpu: 'Intel Xeon E-2334',
-      price: 99,
-      priceMonthly: 9,
+      storage: 512,
+      cpu: 'Intel Xeon E-2388G',
+      price: 25,
+      priceMonthly: 14,
       serverId: servers[0]._id,
       isAvailable: true,
     },
     {
-      name: 'VPS Pro',
+      name: 'VPS كبيرة',
       ram: 8,
-      storage: '512 GB',
-      cpu: 'Intel Xeon E-2334',
-      price: 199,
-      priceMonthly: 19,
+      storage: 512,
+      cpu: 'Intel Xeon E-2388G',
+      price: 45,
+      priceMonthly: 25,
       serverId: servers[0]._id,
       isAvailable: true,
     },
     {
-      name: 'Dedicated Basic',
+      name: 'VPS احترافية',
       ram: 16,
-      storage: '512 GB',
-      cpu: 'AMD EPYC 7302',
-      price: 499,
-      priceMonthly: 49,
+      storage: 1024,
+      cpu: 'Intel Xeon E-2388G',
+      price: 80,
+      priceMonthly: 45,
+      serverId: servers[0]._id,
+      isAvailable: true,
+    },
+
+    // NVMe Packages
+    {
+      name: 'NVMe اقتصادية',
+      ram: 4,
+      storage: 256,
+      cpu: 'AMD EPYC 7402',
+      price: 30,
+      priceMonthly: 17,
       serverId: servers[1]._id,
       isAvailable: true,
     },
     {
-      name: 'Dedicated Pro',
-      ram: 32,
-      storage: '1 TB',
-      cpu: 'AMD EPYC 7302',
-      price: 799,
-      priceMonthly: 79,
-      serverId: servers[1]._id,
-      isAvailable: true,
-    },
-    {
-      name: 'Cloud Starter',
+      name: 'NVMe متوسطة',
       ram: 8,
-      storage: '256 GB',
+      storage: 512,
+      cpu: 'AMD EPYC 7402',
+      price: 55,
+      priceMonthly: 30,
+      serverId: servers[1]._id,
+      isAvailable: true,
+    },
+    {
+      name: 'NVMe كبيرة',
+      ram: 16,
+      storage: 1024,
+      cpu: 'AMD EPYC 7402',
+      price: 99,
+      priceMonthly: 55,
+      serverId: servers[1]._id,
+      isAvailable: true,
+    },
+    {
+      name: 'NVMe احترافية',
+      ram: 32,
+      storage: 2048,
+      cpu: 'AMD EPYC 7402',
+      price: 180,
+      priceMonthly: 100,
+      serverId: servers[1]._id,
+      isAvailable: true,
+    },
+
+    // Cloud Packages
+    {
+      name: 'Cloud اقتصادية',
+      ram: 8,
+      storage: 256,
       cpu: 'Intel Xeon Gold 6226R',
-      price: 299,
-      priceMonthly: 29,
+      price: 40,
+      priceMonthly: 22,
       serverId: servers[2]._id,
       isAvailable: true,
     },
     {
-      name: 'Shared Basic',
+      name: 'Cloud متوسطة',
+      ram: 16,
+      storage: 512,
+      cpu: 'Intel Xeon Gold 6226R',
+      price: 75,
+      priceMonthly: 42,
+      serverId: servers[2]._id,
+      isAvailable: true,
+    },
+    {
+      name: 'Cloud كبيرة',
+      ram: 32,
+      storage: 1024,
+      cpu: 'Intel Xeon Gold 6226R',
+      price: 130,
+      priceMonthly: 72,
+      serverId: servers[2]._id,
+      isAvailable: true,
+    },
+    {
+      name: 'Cloud احترافية',
+      ram: 64,
+      storage: 2048,
+      cpu: 'Intel Xeon Gold 6226R',
+      price: 230,
+      priceMonthly: 128,
+      serverId: servers[2]._id,
+      isAvailable: true,
+    },
+
+    // Windows Packages
+    {
+      name: 'Windows اقتصادية',
       ram: 4,
-      storage: '256 GB',
+      storage: 256,
       cpu: 'Intel Xeon E-2334',
-      price: 49,
-      priceMonthly: 4,
+      price: 35,
+      priceMonthly: 19,
+      serverId: servers[3]._id,
+      isAvailable: true,
+    },
+    {
+      name: 'Windows متوسطة',
+      ram: 8,
+      storage: 512,
+      cpu: 'Intel Xeon E-2334',
+      price: 60,
+      priceMonthly: 33,
+      serverId: servers[3]._id,
+      isAvailable: true,
+    },
+    {
+      name: 'Windows كبيرة',
+      ram: 16,
+      storage: 1024,
+      cpu: 'Intel Xeon E-2334',
+      price: 110,
+      priceMonthly: 61,
+      serverId: servers[3]._id,
+      isAvailable: true,
+    },
+    {
+      name: 'Windows احترافية',
+      ram: 32,
+      storage: 2048,
+      cpu: 'Intel Xeon E-2334',
+      price: 200,
+      priceMonthly: 111,
       serverId: servers[3]._id,
       isAvailable: true,
     },
@@ -249,52 +363,58 @@ async function seed() {
   // Orders
   await Order.insertMany([
     {
-      methodPayment: 'credit_card',
+      methodPayment: 'shamCash',
+      paymentNumber: '1234567890',
       status: 'completed',
       userId: ADMIN_ID,
       item: [
-        { type: 'buy', price: 99, duration: 0, packageId: packages[0]._id },
+        { type: 'buy', price: 15, duration: 0, packageId: packages[0]._id },
       ],
     },
     {
-      methodPayment: 'shamCash',
+      methodPayment: 'syriatelCash',
+      paymentNumber: '0987654321',
       status: 'pending',
       userId: ADMIN_ID,
       item: [
-        { type: 'rent', price: 49, duration: 30, packageId: packages[1]._id },
-      ],
-    },
-    {
-      methodPayment: 'credit_card',
-      status: 'active',
-      userId: ADMIN_ID,
-      item: [
-        { type: 'rent', price: 79, duration: 30, packageId: packages[2]._id },
+        { type: 'rent', price: 17, duration: 30, packageId: packages[4]._id },
       ],
     },
     {
       methodPayment: 'shamCash',
+      paymentNumber: '1122334455',
+      status: 'active',
+      userId: ADMIN_ID,
+      item: [
+        { type: 'rent', price: 22, duration: 30, packageId: packages[8]._id },
+      ],
+    },
+    {
+      methodPayment: 'syriatelCash',
+      paymentNumber: '5544332211',
       status: 'completed',
       userId: ADMIN_ID,
       item: [
-        { type: 'buy', price: 499, duration: 0, packageId: packages[3]._id },
-      ],
-    },
-    {
-      methodPayment: 'credit_card',
-      status: 'cancelled',
-      userId: ADMIN_ID,
-      item: [
-        { type: 'rent', price: 29, duration: 30, packageId: packages[4]._id },
+        { type: 'buy', price: 35, duration: 0, packageId: packages[12]._id },
       ],
     },
     {
       methodPayment: 'shamCash',
+      paymentNumber: '6677889900',
+      status: 'cancelled',
+      userId: ADMIN_ID,
+      item: [
+        { type: 'rent', price: 30, duration: 30, packageId: packages[5]._id },
+      ],
+    },
+    {
+      methodPayment: 'syriatelCash',
+      paymentNumber: '9900778866',
       status: 'active',
       userId: ADMIN_ID,
       item: [
-        { type: 'rent', price: 29, duration: 30, packageId: packages[4]._id },
-        { type: 'buy', price: 49, duration: 0, packageId: packages[5]._id },
+        { type: 'rent', price: 42, duration: 30, packageId: packages[9]._id },
+        { type: 'buy', price: 25, duration: 0, packageId: packages[1]._id },
       ],
     },
   ]);
@@ -328,7 +448,7 @@ async function seed() {
     },
     {
       title: 'تجديد الاشتراك',
-      body: 'اشتراكك سينتهي خلال 7 أيام، يرجى التجديد',
+      body: 'اشتراكك سينتهي خلال 3 أيام، يرجى التجديد',
       isRead: false,
       userId: ADMIN_ID,
     },

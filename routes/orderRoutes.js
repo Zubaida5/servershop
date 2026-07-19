@@ -25,6 +25,10 @@ router
   .patch(restrictTo(ADMIN), orderController.updateOrderStatus);
 
 router
+  .route('/:id/cancel')
+  .patch(restrictTo(USER), orderController.cancelOrder);
+
+router
   .route('/:id')
   .get(restrictTo(USER, ADMIN), orderController.getOrder)
   .delete(restrictTo(ADMIN), orderController.deleteOrder);
