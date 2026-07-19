@@ -1,5 +1,9 @@
 const swaggerJsDoc = require('swagger-jsdoc');
-const { package, createpackage, updatepackage } = require('./routes/packageSwagger');
+const {
+  package,
+  createpackage,
+  updatepackage,
+} = require('./routes/packageSwagger');
 const {
   Message,
   createMessage,
@@ -19,6 +23,7 @@ const {
 } = require('./routes/serverSwagger');
 const { signUp } = require('./routes/auth');
 const { User, updateMe, createUser } = require('./routes/users');
+const { Contact, createContact } = require('./routes/contactSwagger');
 const {
   DuplicateEmail,
   Error,
@@ -67,6 +72,8 @@ const options = {
         createUser,
         updateMe,
         User,
+        Contact,
+        createContact,
         Error,
       },
       securitySchemes: {
@@ -82,37 +89,20 @@ const options = {
         Forbidden,
         NotFound,
         Unauthorized,
-        201: {
-          description: 'created',
-        },
-        200: {
-          description: 'ok',
-        },
-        204: {
-          description: 'No content',
-        },
-        400: {
-          description: 'Bad request',
-        },
-        401: {
-          description: 'Unauthorized',
-        },
-        403: {
-          description: 'Forbidden',
-        },
-        404: {
-          description: 'Not found',
-        },
-        413: {
-          description: 'Payload Too Large',
-        },
-        500: {
-          description: 'Internal server error',
-        },
+        201: { description: 'created' },
+        200: { description: 'ok' },
+        204: { description: 'No content' },
+        400: { description: 'Bad request' },
+        401: { description: 'Unauthorized' },
+        403: { description: 'Forbidden' },
+        404: { description: 'Not found' },
+        413: { description: 'Payload Too Large' },
+        500: { description: 'Internal server error' },
       },
     },
   },
   apis: ['./swagger/routes/*.js'],
 };
+
 const swaggerSpec = swaggerJsDoc(options);
 module.exports = swaggerSpec;

@@ -83,12 +83,14 @@ const typeRouter = require('./routes/typeRoutes');
 const serverRouter = require('./routes/serverRoutes');
 const userRouter = require('./routes/userRoutes');
 const imageRouter = require('./routes/imageRoutes');
+const contactRouter = require('./routes/contactRoutes');
 
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 //ROUTES <dont remove this line>
 app.use('/api/v1.0.0/packages', packageRouter);
 app.use('/api/v1.0.0/messages', messageRouter);
 app.use('/api/v1.0.0/orders', orderRouter);
+app.use('/api/v1.0.0/contacts', contactRouter);
 
 app.use('/api/v1.0.0/reviews', reviewRouter);
 app.use('/api/v1.0.0/types', typeRouter);
