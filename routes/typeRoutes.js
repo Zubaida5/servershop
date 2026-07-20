@@ -4,14 +4,17 @@ const { RoleCode } = require('./../utils/enum');
 const { USER, ADMIN } = RoleCode;
 const express = require('express');
 const router = express.Router();
+
 router.use(protect);
+
 router
   .route('/')
   .get(restrictTo(USER, ADMIN), typeController.getAllType)
   .post(restrictTo(ADMIN), typeController.createType);
+
 router
   .route('/:id')
   .get(restrictTo(USER, ADMIN), typeController.getType)
-  .patch(restrictTo(ADMIN), typeController.updateType)
-  .delete(restrictTo(ADMIN), typeController.deleteType);
+  .patch(restrictTo(ADMIN), typeController.updateType);
+
 module.exports = router;

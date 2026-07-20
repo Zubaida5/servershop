@@ -182,39 +182,7 @@
  *       "404":
  *         $ref: '#/components/responses/NotFound'
  *
- *   delete:
- *     summary: Delete a  type.
- *     description: ADMIN can use this router.
- *     tags: [Types]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: Type id
- *     responses:
- *       "200":
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: success
- *                 data:
- *                   type: string
- *                   example: null
- *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "403":
- *         $ref: '#/components/responses/Forbidden'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *  
  */
 
 exports.Type = {

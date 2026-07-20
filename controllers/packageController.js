@@ -50,12 +50,29 @@ exports.getPackage = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllPackage = catchAsync(async (req, res, next) => {
-  let query =
-    req.user.role === 'ADMIN'
-      ? Package.find()
-      : Package.find({ isAvailable: true });
+  const isAdmin = req.user.role === 'ADMIN';
+  const filter = isAdmin ? {} : { isAvailable: true };
 
-  if (req.user.role === 'ADMIN') {
+  // فلتر حسب نوع السيرفر
+  if (req.query.type) {
+    // نجيب الـ Type أول
+    const Type = require('../models/typeModel');
+    const type = await Type.findOne({ name: req.query.type });
+
+    if (!type) {
+      return next(new AppError('No type found with this name', 404));
+    }
+
+    // نجيب السيرفرات من هاد النوع
+    const servers = await Server.find({ typeId: type._id });
+    const serverIds = servers.map((s) => s._id);
+
+    filter.serverId = { $in: serverIds };
+  }
+
+  let query = Package.find(filter);
+
+  if (isAdmin) {
     query = query.populate({ path: 'serverId', select: '-__v' });
   }
 

@@ -45,11 +45,17 @@
  *
  *   get:
  *     summary: Get all packages
- *     description: USER,ADMIN can retrieve all packages. ADMIN sees full server details, USER sees server id only.
+ *     description: USER,ADMIN can retrieve all packages. ADMIN sees full server details, USER sees server id only. Can filter by server type.
  *     tags: [packages]
  *     security:
  *       - Bearer: []
  *     parameters:
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [VPS, VPS-NVMe, Cloud, Windows]
+ *         description: filter packages by server type (ex. VPS, VPS-NVMe, Cloud, Windows)
  *       - in: query
  *         name: fields
  *         schema:
@@ -69,11 +75,6 @@
  *           minimum: 1
  *         default: 10
  *         description: Maximum number of packages
- *       - in: query
- *         name: search
- *         schema:
- *           type: string
- *         description: key-words you want to search about it
  *       - in: query
  *         name: sort
  *         schema:
@@ -228,7 +229,7 @@ exports.package = {
     id: { type: 'string' },
     name: { type: 'string' },
     ram: { type: 'number' },
-    storage: { type: 'string' },
+    storage: { type: 'number' },
     cpu: { type: 'string' },
     price: { type: 'number' },
     priceMonthly: { type: 'number' },
@@ -237,12 +238,12 @@ exports.package = {
   },
   example: {
     _id: '5ebac534954b54139806c112',
-    name: 'VPS Starter',
-    ram: 8,
-    storage: '256 GB',
-    cpu: 'Intel Xeon E-2334',
-    price: 99,
-    priceMonthly: 9,
+    name: 'VPS اقتصادية',
+    ram: 2,
+    storage: 256,
+    cpu: 'Intel Xeon E-2388G',
+    price: 15,
+    priceMonthly: 8,
     serverId: '6a2f01f71a762e06b098a7e6',
     isAvailable: true,
     createdAt: '2024-11-24T16:35:04.438Z',
@@ -255,30 +256,20 @@ exports.createpackage = {
   properties: {
     name: { type: 'string' },
     ram: { type: 'number' },
-    storage: { type: 'string' },
-    cpu: { type: 'string' },
+    storage: { type: 'number' },
     price: { type: 'number' },
     priceMonthly: { type: 'number' },
     serverId: { type: 'string' },
   },
   example: {
-    name: 'VPS Starter',
-    ram: 8,
-    storage: '256 GB',
-    cpu: 'Intel Xeon E-2334',
-    price: 99,
-    priceMonthly: 9,
+    name: 'VPS اقتصادية',
+    ram: 2,
+    storage: 256,
+    price: 15,
+    priceMonthly: 8,
     serverId: '6a2f01f71a762e06b098a7e6',
   },
-  required: [
-    'name',
-    'ram',
-    'storage',
-    'cpu',
-    'price',
-    'priceMonthly',
-    'serverId',
-  ],
+  required: ['name', 'ram', 'storage', 'price', 'priceMonthly', 'serverId'],
 };
 
 exports.updatepackage = {
@@ -286,19 +277,17 @@ exports.updatepackage = {
   properties: {
     name: { type: 'string' },
     ram: { type: 'number' },
-    storage: { type: 'string' },
-    cpu: { type: 'string' },
+    storage: { type: 'number' },
     price: { type: 'number' },
     priceMonthly: { type: 'number' },
     isAvailable: { type: 'boolean' },
   },
   example: {
-    name: 'VPS Starter',
-    ram: 8,
-    storage: '256 GB',
-    cpu: 'Intel Xeon E-2334',
-    price: 99,
-    priceMonthly: 9,
+    name: 'VPS اقتصادية',
+    ram: 2,
+    storage: 256,
+    price: 15,
+    priceMonthly: 8,
     isAvailable: true,
   },
 };
