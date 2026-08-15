@@ -56,6 +56,18 @@ exports.updateServer = catchAsync(async (req, res, next) => {
     );
   }
 
+  // إذا الأدمن بدو يحط maintenance، لازم يحط maintenanceEndTime
+  if (req.body.status === 'maintenance' && !req.body.maintenanceEndTime) {
+    return next(
+      new AppError('لازم تحدد وقت انتهاء الصيانة (maintenanceEndTime)', 400),
+    );
+  }
+
+  // إذا الأدمن بدو يرجع السيرفر online أو offline، نشيل maintenanceEndTime
+  if (req.body.status === 'online' || req.body.status === 'offline') {
+    req.body.maintenanceEndTime = null;
+  }
+
   const updatedServer = await Server.findByIdAndUpdate(
     req.params.id,
     req.body,
@@ -67,7 +79,6 @@ exports.updateServer = catchAsync(async (req, res, next) => {
     data: { doc: updatedServer },
   });
 });
-
 
 exports.getAllServer = catchAsync(async (req, res, next) => {
   let query = Server.find();

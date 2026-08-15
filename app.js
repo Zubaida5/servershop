@@ -84,6 +84,10 @@ const serverRouter = require('./routes/serverRoutes');
 const userRouter = require('./routes/userRoutes');
 const imageRouter = require('./routes/imageRoutes');
 const contactRouter = require('./routes/contactRoutes');
+const startCronJobs = require('./utils/cronJobs');
+startCronJobs();
+const startMonitoring = require('./utils/serverMonitor');
+startMonitoring();
 
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 //ROUTES <dont remove this line>

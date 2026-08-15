@@ -6,6 +6,11 @@ const serverSchema = new mongoose.Schema(
       required: [true, 'Please enter name'],
       unique: true,
     },
+    status: {
+      type: String,
+      enum: ['online', 'offline'],
+      default: 'online',
+    },
     location: {
       type: String,
       required: [true, 'Please enter location'],
@@ -31,7 +36,7 @@ const serverSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    
+
     totalStorage: {
       type: Number,
       required: [true, 'Please enter totalStorage'],
