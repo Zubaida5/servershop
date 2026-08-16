@@ -13,6 +13,13 @@ router
   .post(restrictTo(ADMIN), serverController.createServer);
 
 router.route('/mine').get(restrictTo(USER), serverController.getMyPackages);
+router
+  .route('/memory-by-type')
+  .get(restrictTo(ADMIN), serverController.getMemoryByType);
+  
+router
+  .route('/:id/status')
+  .patch(restrictTo(ADMIN), serverController.updateServerStatus);
 
 router
   .route('/:id')

@@ -11,6 +11,7 @@ router
   .route('/')
   .post(restrictTo(USER), contactController.createContact)
   .get(restrictTo(ADMIN), contactController.getAllContact);
+  router.route('/mine').get(restrictTo(USER), contactController.getMyContacts);
 
 router.route('/:id').delete(restrictTo(ADMIN), contactController.deleteContact);
 

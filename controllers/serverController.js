@@ -114,3 +114,57 @@ exports.getMyPackages = catchAsync(async (req, res, next) => {
     data: { packages },
   });
 });
+exports.updateServerStatus = catchAsync(async (req, res, next) => {
+  const { status, maintenanceEndTime } = req.body;
+
+  const allowedStatus = ['online', 'offline', 'maintenance'];
+  if (!allowedStatus.includes(status)) {
+    return next(new AppError('Invalid status value', 400));
+  }
+
+  if (status === 'maintenance' && !maintenanceEndTime) {
+    return next(
+      new AppError('لازم تحدد وقت انتهاء الصيانة (maintenanceEndTime)', 400),
+    );
+  }
+
+  const updateData = { status };
+  if (status === 'maintenance') {
+    updateData.maintenanceEndTime = maintenanceEndTime;
+  } else {
+    updateData.maintenanceEndTime = null;
+  }
+
+  const server = await Server.findByIdAndUpdate(req.params.id, updateData, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!server) return next(new AppError('No server found with this ID', 404));
+
+  res.status(200).json({
+    status: 'success',
+    data: { doc: server },
+  });
+});
+exports.getMemoryByType = catchAsync(async (req, res, next) => {
+  const Type = require('../models/typeModel');
+  const types = await Type.find({});
+  const result = {};
+
+  for (const type of types) {
+    const servers = await Server.find({ typeId: type._id });
+
+    result[type.name] = {
+      totalRam: servers.reduce((sum, s) => sum + s.totalRam, 0),
+      usedRam: servers.reduce((sum, s) => sum + s.usedRam, 0),
+      totalStorage: servers.reduce((sum, s) => sum + s.totalStorage, 0),
+      usedStorage: servers.reduce((sum, s) => sum + s.usedStorage, 0),
+    };
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: { result },
+  });
+});

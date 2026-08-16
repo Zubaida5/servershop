@@ -14,6 +14,15 @@ exports.createContact = catchAsync(async (req, res, next) => {
     data: { contact },
   });
 });
+exports.getMyContacts = catchAsync(async (req, res, next) => {
+  const contacts = await Contact.find({ userId: req.user.id });
+
+  res.status(200).json({
+    status: 'success',
+    results: contacts.length,
+    data: { contacts },
+  });
+});
 
 exports.getAllContact = handlerFactory.getAll(Contact);
 exports.deleteContact = handlerFactory.deleteOne(Contact);

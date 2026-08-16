@@ -19,6 +19,9 @@ router
 
 router.route('/mine').get(restrictTo(USER), orderController.getMyOrders);
 router.route('/my-stats').get(restrictTo(USER), orderController.getMyStats);
+router
+  .route('/mine/invoices')
+  .get(restrictTo(USER), orderController.getMyInvoices);
 
 router
   .route('/:id/status')

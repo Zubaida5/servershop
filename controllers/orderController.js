@@ -176,6 +176,18 @@ exports.getAllOrder = catchAsync(async (req, res, next) => {
     data: { orders },
   });
 });
+exports.getMyInvoices = catchAsync(async (req, res, next) => {
+  const orders = await Order.find({
+    userId: req.user.id,
+    status: { $in: ['active', 'completed'] },
+  });
+
+  res.status(200).json({
+    status: 'success',
+    results: orders.length,
+    data: { orders },
+  });
+});
 exports.cancelOrder = catchAsync(async (req, res, next) => {
   const order = await Order.findOne({
     _id: req.params.id,

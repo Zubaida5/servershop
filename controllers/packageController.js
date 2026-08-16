@@ -55,7 +55,6 @@ exports.getAllPackage = catchAsync(async (req, res, next) => {
 
   // فلتر حسب نوع السيرفر
   if (req.query.type) {
-    // نجيب الـ Type أول
     const Type = require('../models/typeModel');
     const type = await Type.findOne({ name: req.query.type });
 
@@ -63,11 +62,15 @@ exports.getAllPackage = catchAsync(async (req, res, next) => {
       return next(new AppError('No type found with this name', 404));
     }
 
-    // نجيب السيرفرات من هاد النوع
     const servers = await Server.find({ typeId: type._id });
     const serverIds = servers.map((s) => s._id);
 
     filter.serverId = { $in: serverIds };
+  }
+
+  // فلتر حسب serverId
+  if (req.query.serverId) {
+    filter.serverId = req.query.serverId;
   }
 
   let query = Package.find(filter);

@@ -12,7 +12,7 @@ const packageSchema = new mongoose.Schema(
       required: [true, 'Please enter ram'],
       enum: [4, 8, 16, 32, 64, 128, 256],
     },
-   
+
     storage: {
       type: Number,
       required: [true, 'Please enter storage'],
@@ -37,6 +37,11 @@ const packageSchema = new mongoose.Schema(
     isAvailable: {
       type: Boolean,
       default: true,
+    },
+    durationType: {
+      type: String,
+      enum: ['monthly', 'yearly', 'purchase'],
+      required: true,
     },
   },
   { timestamps: true, versionKey: false },
