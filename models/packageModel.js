@@ -7,6 +7,11 @@ const packageSchema = new mongoose.Schema(
       required: [true, 'Please enter name'],
       unique: true,
     },
+    category: {
+      type: String,
+      enum: ['economic', 'medium', 'large', 'professional'],
+      required: [true, 'Please enter category'],
+    },
     ram: {
       type: Number,
       required: [true, 'Please enter ram'],
@@ -25,10 +30,7 @@ const packageSchema = new mongoose.Schema(
       type: Number,
       required: [true, 'Please enter price'],
     },
-    priceMonthly: {
-      type: Number,
-      required: [true, 'Please enter priceMonthly'],
-    },
+   
     serverId: {
       type: mongoose.Schema.ObjectId,
       ref: 'Server',

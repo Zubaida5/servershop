@@ -53,7 +53,7 @@ exports.getAllPackage = catchAsync(async (req, res, next) => {
   const isAdmin = req.user.role === 'ADMIN';
   const filter = isAdmin ? {} : { isAvailable: true };
 
-  // فلتر حسب نوع السيرفر
+  // فلتر حسب نوع السيرفر (type)
   if (req.query.type) {
     const Type = require('../models/typeModel');
     const type = await Type.findOne({ name: req.query.type });
@@ -71,6 +71,16 @@ exports.getAllPackage = catchAsync(async (req, res, next) => {
   // فلتر حسب serverId
   if (req.query.serverId) {
     filter.serverId = req.query.serverId;
+  }
+
+  // فلتر حسب نوع الاشتراك (شهري / سنوي / شراء)
+  if (req.query.durationType) {
+    filter.durationType = req.query.durationType;
+  }
+
+  // فلتر حسب فئة الباقة (اقتصادية / متوسطة / كبيرة / احترافية)
+  if (req.query.category) {
+    filter.category = req.query.category;
   }
 
   let query = Package.find(filter);
