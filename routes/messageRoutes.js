@@ -13,6 +13,7 @@ router
     addQuery('userId', 'userId'),
     messageController.getAllMessage,
   );
+  router.route('/').get(restrictTo(ADMIN), messageController.getAllMessage);
 router
   .route('/:id')
   .get(messageController.getMessage)
