@@ -19,14 +19,24 @@ const app = express();
 // 1) GLOBAL MIDDLEWARES
 // Implement CORS
 //سماح للمواقع من الاتصال بالخدمة
-app.use(cors());
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  }),
+);
 //تحديد المواقع المسموح لها بالاتصال
 // في حال وجود اكثر من موقع يتم تمرير مصفوفة بعناوين المواقع
 // app.use(cors({
 //   origin: 'https://www.website.com'
 // }))
 //السماح بالاتصال على جميع الموارد
-app.options('*', cors());
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  }),
+);
 //تحديد المسار او المورد المسموح الاتصال به
 // app.options('/api/v1/resource', cors());
 
