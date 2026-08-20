@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const DB = 'mongodb://127.0.0.1:27017/servershopDb';
-const ADMIN_ID = new mongoose.Types.ObjectId('69d108448e6b7e558de7988f');
+const ADMIN_ID = new mongoose.Types.ObjectId('6a80adbe25cb26b4a1705362');
 
 // ========== Schemas ==========
 
