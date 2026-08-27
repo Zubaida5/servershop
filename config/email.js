@@ -3,10 +3,11 @@ const nodemailer = require('nodemailer');
 const pug = require('pug');
 const { htmlToText } = require('html-to-text');
 module.exports = class Email {
-  constructor(user, url) {
+  constructor(user, urlOrOtp) {
     this.to = user.email;
     this.firstName = user.name.split(' ')[0];
-    this.url = url;
+    this.url = urlOrOtp; // مستخدمة بـ sendWelcome (رابط)
+    this.otp = urlOrOtp; // مستخدمة بـ sendPasswordReset (كود)
     this.from = `FirstName LastName <${process.env.EMAIL_FROM}>`;
   }
   newTransport() {
@@ -48,6 +49,7 @@ module.exports = class Email {
     const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
       firstName: this.firstName,
       url: this.url,
+      otp: this.otp,
       subject,
     });
     // 2) Define email options
@@ -68,7 +70,7 @@ module.exports = class Email {
   async sendPasswordReset() {
     await this.send(
       'passwordReset',
-      'Your password reset token (valid for only 10 minutes)',
+      'Your password reset code (valid for only 10 minutes)',
     );
   }
   /////////////////////////////////
@@ -80,6 +82,7 @@ module.exports = class Email {
     const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
       firstName: this.firstName,
       url: this.url,
+      otp: this.otp,
       subject,
     });
     const recipients = [new Recipient(this.to, 'Recipient')];
@@ -100,7 +103,7 @@ module.exports = class Email {
   async sendPasswordResetMailerSend() {
     await this.sendEmail(
       'passwordReset',
-      'Your password reset token (valid for only 10 minutes)',
+      'Your password reset code (valid for only 10 minutes)',
     );
   }
 };

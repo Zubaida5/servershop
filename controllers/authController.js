@@ -68,19 +68,15 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   if (!user) {
     return next(new AppError('There is no user with email address.', 404));
   }
-  // 2) Generate the random reset token
-  const resetToken = user.createPasswordResetToken();
+  // 2) Generate the OTP
+  const otp = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
   // 3) Send it to user's email
   try {
-    const resetURL = `${req.protocol}://${req.get('host')}${req.originalUrl
-      .split('/', 4)
-      .join('/')}/resetPassword/${resetToken}`;
-    await new Email(user, resetURL).sendPasswordReset();
+    await new Email(user, otp).sendPasswordReset();
     res.status(200).json({
       status: 'success',
-      message: 'Token sent to email!',
-      // url: resetURL,
+      message: 'OTP sent to email!',
     });
   } catch (err) {
     user.passwordResetToken = undefined;
@@ -92,26 +88,29 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     );
   }
 });
+
 exports.resetPassword = catchAsync(async (req, res, next) => {
-  // 1) Get user based on the token
-  const hashedToken = crypto
+  // 1) Get user based on email + OTP
+  const hashedOtp = crypto
     .createHash('sha256')
-    .update(req.params.token)
+    .update(req.body.otp)
     .digest('hex');
+
   const user = await User.findOne({
-    passwordResetToken: hashedToken,
+    email: req.body.email,
+    passwordResetToken: hashedOtp,
     passwordResetExpires: { $gt: Date.now() },
   });
-  // 2) If token has not expired, and there is user, set the new password
+
+  // 2) If OTP has not expired, and there is user, set the new password
   if (!user) {
-    return next(new AppError('Token is invalid or has expired', 400));
+    return next(new AppError('Code is invalid or has expired', 400));
   }
   user.password = req.body.password;
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
   await user.save();
-  // 3) Update changedPasswordAt property for the user
-  // 4) Log the user in, send JWT
+  // 3) Log the user in, send JWT
   createSendToken(user, 200, req, res);
 });
 exports.updatePassword = catchAsync(async (req, res, next) => {

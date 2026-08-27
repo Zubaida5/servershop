@@ -80,13 +80,17 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   return false;
 };
 userSchema.methods.createPasswordResetToken = function () {
-  const resetToken = crypto.randomBytes(32).toString('hex');
+  // كود OTP من 6 أرقام بدل الـ token الطويل
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
   this.passwordResetToken = crypto
     .createHash('sha256')
-    .update(resetToken)
+    .update(otp)
     .digest('hex');
-  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-  return resetToken;
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // صالح 10 دقايق
+
+  return otp; // هاد يلي رح ينبعت بالإيميل (مو مشفر)
 };
 const User = mongoose.model('User', userSchema);
 module.exports = User;
