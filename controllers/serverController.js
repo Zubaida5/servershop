@@ -5,7 +5,7 @@ const AppError = require('../utils/appError');
 const handlerFactory = require('../utils/handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 
-const hiddenFields = '-usedRam -usedStorage -isAvailable -lastChecked';
+const hiddenFields = '-usedRam -usedStorage -isAvailable';
 
 exports.getServer = catchAsync(async (req, res, next) => {
   let query = Server.findById(req.params.id);
