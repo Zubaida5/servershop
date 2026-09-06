@@ -1,4 +1,5 @@
 const Order = require('../models/orderModel');
+const mongoose = require('mongoose');
 const Package = require('../models/packageModel');
 const Server = require('../models/serverModel');
 const Message = require('../models/messageModel');
@@ -133,33 +134,44 @@ exports.updateOrderStatus = catchAsync(async (req, res, next) => {
     'cancelled',
     'rejected',
   ];
+
   if (!allowedStatus.includes(status)) {
     return next(new AppError('Invalid status value', 400));
   }
 
-  const order = await Order.findByIdAndUpdate(
-    req.params.id,
-    { status },
-    { new: true, runValidators: true },
-  );
+  // نجيب الـ Order بدون populate حتى يبقى userId هو ObjectId الحقيقي
+  const order = await Order.collection.findOne({
+    _id: new mongoose.Types.ObjectId(req.params.id),
+  });
 
-  if (!order) return next(new AppError('No order found with this ID', 404));
+  if (!order) {
+    return next(new AppError('No order found with this ID', 404));
+  }
 
-  // إذا صار الأوردر active، بعت Message لليوزر
+  // تحديث حالة الطلب
+  await Order.updateOne({ _id: req.params.id }, { $set: { status } });
+
+  // إنشاء Notification للمستخدم
   if (status === 'active') {
     await Message.create({
       title: 'تم تفعيل طلبك',
       body: {
         orderId: order._id,
+        message: 'تم تفعيل طلبك بنجاح',
       },
       userId: order.userId,
       isRead: false,
     });
   }
 
+  // نعيد الطلب بعد التحديث
+  const updatedOrder = await Order.findById(req.params.id);
+
   res.status(200).json({
     status: 'success',
-    data: { order },
+    data: {
+      order: updatedOrder,
+    },
   });
 });
 

@@ -13,6 +13,10 @@ router
   .post(restrictTo(ADMIN), packageController.createPackage);
 
 router
+  .route('/auto-fix-categories')
+  .patch(restrictTo(ADMIN), packageController.autoFixCategories);
+
+router
   .route('/:id')
   .get(restrictTo(USER, ADMIN), packageController.getPackage)
   .patch(restrictTo(ADMIN), packageController.updatePackage)

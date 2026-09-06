@@ -68,14 +68,15 @@ module.exports = class Email {
     await this.send('welcome', 'Welcome to the NameProject Family!');
   }
   async sendPasswordReset() {
-    await this.send(
-      'passwordReset',
-      'Your password reset code (valid for only 10 minutes)',
-    );
+    await this.sendPasswordResetMailerSend();
   }
   /////////////////////////////////
 
   async sendEmail(template, subject) {
+    console.log(
+      'MAILERSEND API KEY LOADED:',
+      Boolean(process.env.EMAIL_API_KEY),
+    );
     const mailersend = new MailerSend({
       apiKey: process.env.EMAIL_API_KEY,
     });

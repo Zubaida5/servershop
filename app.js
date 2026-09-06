@@ -52,7 +52,7 @@ if (process.env.NODE_ENV === 'development') {
 // Limit requests from same API
 // منع اغراق السرفر بطلبات وهمية
 const limiter = rateLimit({
-  max: 100,
+  max: 2000,
   windowMs: 60 * 60 * 1000,
   message: 'Too many requests from this IP, please try again in an hour!',
 });
@@ -94,6 +94,7 @@ const serverRouter = require('./routes/serverRoutes');
 const userRouter = require('./routes/userRoutes');
 const imageRouter = require('./routes/imageRoutes');
 const contactRouter = require('./routes/contactRoutes');
+const adminRouter = require('./routes/adminRoutes');
 const startCronJobs = require('./utils/cronJobs');
 startCronJobs();
 const startMonitoring = require('./utils/serverMonitor');
@@ -111,6 +112,7 @@ app.use('/api/v1.0.0/types', typeRouter);
 app.use('/api/v1.0.0/servers', serverRouter);
 app.use('/api/v1.0.0/users', userRouter);
 app.use('/api/v1.0.0/images', imageRouter);
+app.use('/api/v1.0.0/admin', adminRouter);
 //في حال طلب مورد غير موجود
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
