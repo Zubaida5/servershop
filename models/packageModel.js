@@ -29,8 +29,9 @@ const packageSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: [true, 'Please enter price'],
+      min: [0, 'Price cannot be negative'],
     },
-   
+
     serverId: {
       type: mongoose.Schema.ObjectId,
       ref: 'Server',

@@ -10,6 +10,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please tell us your name!'],
       trim: true,
+      validate: {
+        validator: function (name) {
+          return /^[a-zA-Z\u0600-\u06FF\s]+$/.test(name);
+        },
+        message: 'Name must contain only letters',
+      },
     },
     email: {
       type: String,

@@ -9,6 +9,12 @@ const orderSchema = new mongoose.Schema(
     paymentNumber: {
       type: String,
       required: [true, 'Please enter payment number'],
+      validate: {
+        validator: function (v) {
+          return /^\d+$/.test(v);
+        },
+        message: 'Payment number must contain only numbers',
+      },
     },
     paymentImage: {
       type: String,
