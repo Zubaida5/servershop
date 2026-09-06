@@ -102,16 +102,76 @@ exports.getMyPackages = catchAsync(async (req, res, next) => {
     status: { $in: ['active', 'completed', 'pending'] },
   }).lean();
 
-  const packageIds = orders.flatMap((order) =>
-    order.item.map((i) => i.packageId._id || i.packageId),
-  );
+  const result = [];
 
-  const packages = await Package.find({ _id: { $in: packageIds } });
+  for (const order of orders) {
+    for (const item of order.item || []) {
+      const packageId = item.packageId?._id || item.packageId;
+
+      if (!packageId) continue;
+
+      const pkg = await Package.findById(packageId).lean();
+
+      if (!pkg) continue;
+
+      const server = await Server.findById(pkg.serverId).lean();
+
+      if (!server) continue;
+
+      let endDate = null;
+      let daysLeft = null;
+
+      if (item.type === 'rent' && item.duration) {
+        endDate = new Date(order.createdAt);
+
+        endDate.setDate(endDate.getDate() + Number(item.duration));
+
+        daysLeft = Math.ceil((endDate - new Date()) / (1000 * 60 * 60 * 24));
+      }
+
+      /*
+       * Server status comes directly from Backend.
+       *
+       * Allowed:
+       * online
+       * offline
+       * maintenance
+       */
+
+      let serverStatus = server.status || 'offline';
+
+      if (!['online', 'offline', 'maintenance'].includes(serverStatus)) {
+        serverStatus = 'offline';
+      }
+
+      result.push({
+        id: `${order._id}-${item.packageId}`,
+        orderId: order._id,
+        orderStatus: order.status,
+
+        type: item.type,
+        duration: item.duration || null,
+
+        package: pkg,
+
+        server: {
+          ...server,
+          status: serverStatus,
+        },
+
+        startDate: order.createdAt,
+        endDate,
+        daysLeft,
+      });
+    }
+  }
 
   res.status(200).json({
     status: 'success',
-    results: packages.length,
-    data: { packages },
+    results: result.length,
+    data: {
+      servers: result,
+    },
   });
 });
 exports.updateServerStatus = catchAsync(async (req, res, next) => {

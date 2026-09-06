@@ -8,8 +8,11 @@ const serverSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['online', 'offline'],
+      enum: ['online', 'offline', 'maintenance'],
       default: 'online',
+    },
+    maintenanceEndTime: {
+      type: Date,
     },
     location: {
       type: String,
@@ -29,8 +32,7 @@ const serverSchema = new mongoose.Schema(
     },
     totalRam: {
       type: Number,
-      required: [true, 'Please enter totalRam'],
-      enum: [4, 8, 16, 32, 64, 128, 256],
+      required: true,
     },
     usedRam: {
       type: Number,
@@ -39,11 +41,16 @@ const serverSchema = new mongoose.Schema(
 
     totalStorage: {
       type: Number,
-      required: [true, 'Please enter totalStorage'],
+      required: true,
     },
     usedStorage: {
       type: Number,
       default: 0,
+    },
+    status: {
+      type: String,
+      enum: ['online', 'offline', 'maintenance'],
+      default: 'online',
     },
     typeId: {
       type: mongoose.Schema.ObjectId,
@@ -56,6 +63,7 @@ const serverSchema = new mongoose.Schema(
     },
     lastChecked: {
       type: Date,
+      default: Date.now,
     },
   },
   { timestamps: true, versionKey: false },

@@ -9,7 +9,7 @@ const signToken = (id) => {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
-createSendToken = (user, statusCode, req, res) => {
+const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
   res.cookie('jwt', token, {
     expires: new Date(
@@ -35,7 +35,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
   const url = `${req.protocol}://${req.get('host')}/me`;
   await new Email(newUser, url).sendWelcome().catch(async (er) => {
-    await User.deleteOne({ id: newUser.id });
+    await User.deleteOne({ _id: newUser._id });
   });
   createSendToken(newUser, 201, req, res);
 });
@@ -79,12 +79,28 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       message: 'OTP sent to email!',
     });
   } catch (err) {
+    console.error('❌ PASSWORD RESET EMAIL ERROR:');
+    console.error(err);
+    console.error('❌ EMAIL ERROR MESSAGE:', err?.message);
+    console.error(
+      '❌ EMAIL ERROR RESPONSE:',
+      err?.response?.body || err?.response,
+    );
+    console.error(
+      '❌ EMAIL ERROR STATUS:',
+      err?.statusCode || err?.response?.statusCode,
+    );
+
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
+
     await user.save({ validateBeforeSave: false });
+
     return next(
-      new AppError('There was an error sending the email. Try again later!'),
-      500,
+      new AppError(
+        'There was an error sending the email. Try again later!',
+        500,
+      ),
     );
   }
 });

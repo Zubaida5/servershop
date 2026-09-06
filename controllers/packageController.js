@@ -4,6 +4,32 @@ const AppError = require('../utils/appError');
 const handlerFactory = require('../utils/handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 
+const detectCategory = (packageName) => {
+  const name = (packageName || '').toLowerCase();
+
+  if (
+    name.includes('اقتصادية') ||
+    name.includes('economy') ||
+    name.includes('economic')
+  ) {
+    return 'economic';
+  }
+
+  if (name.includes('متوسطة') || name.includes('medium')) {
+    return 'medium';
+  }
+
+  if (name.includes('كبيرة') || name.includes('large')) {
+    return 'large';
+  }
+
+  if (name.includes('احترافية') || name.includes('professional')) {
+    return 'professional';
+  }
+
+  return null;
+};
+
 exports.createPackage = catchAsync(async (req, res, next) => {
   const server = await Server.findById(req.body.serverId);
 
@@ -11,8 +37,15 @@ exports.createPackage = catchAsync(async (req, res, next) => {
     return next(new AppError('No server found with this ID', 404));
   }
 
+  let category = req.body.category;
+
+  if (!category) {
+    category = detectCategory(req.body.name);
+  }
+
   const pkg = await Package.create({
     ...req.body,
+    category,
     cpu: server.cpu,
   });
 
@@ -95,5 +128,31 @@ exports.getAllPackage = catchAsync(async (req, res, next) => {
     status: 'success',
     results: packages.length,
     data: { doc: packages },
+  });
+});
+exports.autoFixCategories = catchAsync(async (req, res, next) => {
+  const packages = await Package.find({});
+
+  let updated = 0;
+
+  for (const pkg of packages) {
+    const category = detectCategory(pkg.name);
+
+    ```
+if (category && pkg.category !== category) {
+  await Package.updateOne(
+    { _id: pkg._id },
+    { $set: { category } },
+  );
+
+  updated++;
+}
+```;
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Package categories updated automatically',
+    updated,
   });
 });
