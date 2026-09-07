@@ -5,7 +5,10 @@ const packageSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, 'Please enter name'],
-      unique: true,
+      validate: {
+        validator: (value) => /^[A-Za-z\u0600-\u06FF]/.test(value),
+        message: 'Name must start with a letter',
+      },
     },
     category: {
       type: String,
