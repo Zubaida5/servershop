@@ -11,13 +11,17 @@ const signToken = (id) => {
 };
 const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
+
   res.cookie('jwt', token, {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
     ),
     httpOnly: true,
-    secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+    // التعديل الضروري للربط بين Vercel و Railway 👇
+    secure: true,
+    sameSite: 'none',
   });
+
   // Remove password from output
   user.password = undefined;
   res.status(statusCode).json({
@@ -26,17 +30,22 @@ const createSendToken = (user, statusCode, req, res) => {
     user,
   });
 };
+
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
-    //  property signup
   });
+
   const url = `${req.protocol}://${req.get('host')}/me`;
-  await new Email(newUser, url).sendWelcome().catch(async (er) => {
-    await User.deleteOne({ _id: newUser._id });
+
+  // قمنا بفصل إرسال الإيميل بشكل مستقل لكي لا يتسبب فشله في حذف الحساب 👇
+  new Email(newUser, url).sendWelcome().catch((er) => {
+    console.error('❌ Failed to send welcome email:', er.message);
+    // تم حذف أمر الـ deleteOne لضمان بقاء الحساب في قاعدة البيانات دائماً
   });
+
   createSendToken(newUser, 201, req, res);
 });
 exports.login = catchAsync(async (req, res, next) => {

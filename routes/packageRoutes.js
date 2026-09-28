@@ -4,13 +4,12 @@ const { RoleCode } = require('../utils/enum');
 const { USER, ADMIN } = RoleCode;
 const express = require('express');
 const router = express.Router();
+// المسارات العامة (متاحة للجميع دون تسجيل دخول)
+router.route('/').get(packageController.getAllPackage);
+router.route('/:id').get(packageController.getPackage);
 
 router.use(protect);
-
-router
-  .route('/')
-  .get(restrictTo(USER, ADMIN), packageController.getAllPackage)
-  .post(restrictTo(ADMIN), packageController.createPackage);
+router.route('/').post(restrictTo(ADMIN), packageController.createPackage);
 
 router
   .route('/auto-fix-categories')
@@ -18,7 +17,6 @@ router
 
 router
   .route('/:id')
-  .get(restrictTo(USER, ADMIN), packageController.getPackage)
   .patch(restrictTo(ADMIN), packageController.updatePackage)
   .delete(restrictTo(ADMIN), packageController.deletePackage);
 

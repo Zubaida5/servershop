@@ -16,13 +16,30 @@ const AppError = require('./utils/appError');
 const errorGlobal = require('./controllers/errorController');
 // Start express app
 const app = express();
+app.set('trust proxy', 1); // ضروري جداً لعمل حزمة express-rate-limit على Railway بدون مشاكل
+
 // 1) GLOBAL MIDDLEWARES
 // Implement CORS
 //سماح للمواقع من الاتصال بالخدمة
+// 1) GLOBAL MIDDLEWARES
+// Implement CORS
+// السماح للموقع المحلي وموقع Vercel بالاتصال بالخدمة
+const allowedOrigins = [
+  'http://localhost:3000', // للتطوير المحلي على جهازك
+  'https://servergo.vercel.app', // رابط الفرونت إيند الفعلي على Vercel
+];
+
 app.use(
   cors({
-    origin: 'http://localhost:3000',
-    credentials: true,
+    origin: function (origin, callback) {
+      // السماح بالطلبات بدون origin (مثل Postman) أو المواقع المسموحة في المصفوفة
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true, // مهم جداً لإرسال الكوكيز والـ Tokens
   }),
 );
 //تحديد المواقع المسموح لها بالاتصال
@@ -31,12 +48,7 @@ app.use(
 //   origin: 'https://www.website.com'
 // }))
 //السماح بالاتصال على جميع الموارد
-app.use(
-  cors({
-    origin: 'http://localhost:3000',
-    credentials: true,
-  }),
-);
+
 //تحديد المسار او المورد المسموح الاتصال به
 // app.options('/api/v1/resource', cors());
 
@@ -119,19 +131,20 @@ app.all('*', (req, res, next) => {
 });
 app.use(errorGlobal);
 
-//4)
+//4)// 4) CONNECT TO DATABASE
+// يقرأ أولاً رابط الأونلاين المرفوع على Railway، وإذا لم يجده يتصل محلياً
+const DB = process.env.DATABASE_ATLAS || process.env.DATABASE_LOCAL;
+
 mongoose
-  .connect(process.env.DATABASE_LOCAL)
-  .then((result) => {
-    app.listen(process.env.PORT, () => {
-      console.log(
-        `Example app listening at http://localhost:${process.env.PORT}
-Example app listening at http://localhost:${process.env.PORT}/docs`,
-      );
+  .connect(DB)
+  .then(() => {
+    const port = process.env.PORT || 8080;
+    app.listen(port, () => {
+      console.log(`Application successfully listening on port ${port}`);
     });
   })
   .catch((err) => {
-    console.log(err);
+    console.error('💥 DATABASE CONNECTION ERROR:', err);
   });
 
 // //4) اتصال مع قاعدة البيانات الخارجية في اطلس باستخدام مكتبة مونغوس
