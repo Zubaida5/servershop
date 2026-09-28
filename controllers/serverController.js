@@ -10,7 +10,8 @@ const hiddenFields = '-usedRam -usedStorage -isAvailable';
 exports.getServer = catchAsync(async (req, res, next) => {
   let query = Server.findById(req.params.id);
 
-  if (req.user.role !== 'ADMIN') {
+  const isAdmin = req.user && req.user.role === 'ADMIN';
+  if (!isAdmin) {
     query = query.select(hiddenFields);
   }
 
@@ -83,7 +84,8 @@ exports.updateServer = catchAsync(async (req, res, next) => {
 exports.getAllServer = catchAsync(async (req, res, next) => {
   let query = Server.find();
 
-  if (req.user.role !== 'ADMIN') {
+  const isAdmin = req.user && req.user.role === 'ADMIN';
+  if (!isAdmin) {
     query = query.select(hiddenFields);
   }
 
