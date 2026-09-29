@@ -10,7 +10,29 @@ const catchAsync = require('../utils/catchAsync');
 exports.getOrder = handlerFactory.getOne(Order);
 
 exports.createOrder = catchAsync(async (req, res, next) => {
-  for (const orderItem of req.body.item) {
+  // item يصل من FormData كنص JSON
+  let items = req.body.item;
+
+  // تحويل item من String إلى Array
+  if (typeof items === 'string') {
+    try {
+      items = JSON.parse(items);
+    } catch (error) {
+      return next(new AppError('Invalid order items format', 400));
+    }
+  }
+
+  // التأكد أن item مصفوفة
+  if (!Array.isArray(items) || items.length === 0) {
+    return next(new AppError('Order items must be a non-empty array', 400));
+  }
+
+  // نضع الـ Array المحولة داخل req.body
+  // حتى Order.create يحفظها بالشكل الصحيح
+  req.body.item = items;
+
+  // فحص كل عنصر في الطلب
+  for (const orderItem of items) {
     const pkg = await Package.findById(orderItem.packageId);
 
     if (!pkg) {
@@ -23,13 +45,14 @@ exports.createOrder = catchAsync(async (req, res, next) => {
       );
     }
 
-    const server = await Server.findById(pkg.serverId._id || pkg.serverId);
+    const server = await Server.findById(pkg.serverId?._id || pkg.serverId);
 
     if (!server) {
       return next(new AppError('Server not found', 404));
     }
 
     const remainingRam = server.totalRam - server.usedRam;
+
     if (remainingRam < pkg.ram) {
       return next(
         new AppError(
@@ -40,6 +63,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     }
 
     const remainingStorage = server.totalStorage - server.usedStorage;
+
     if (remainingStorage < pkg.storage) {
       return next(
         new AppError(
@@ -54,6 +78,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 
     if (server.usedRam >= server.totalRam) {
       server.isAvailable = false;
+
       await Package.updateMany(
         { serverId: server._id },
         { isAvailable: false },
@@ -63,6 +88,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     await server.save();
   }
 
+  // إنشاء الطلب
   const order = await Order.create({
     ...req.body,
     status: 'pending',
